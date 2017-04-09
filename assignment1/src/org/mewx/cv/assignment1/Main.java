@@ -1,6 +1,9 @@
 package org.mewx.cv.assignment1;
 
 
+import org.bytedeco.javacpp.opencv_core.Mat;
+import org.bytedeco.javacpp.opencv_core.MatVector;
+import org.bytedeco.javacpp.opencv_imgcodecs;
 import org.bytedeco.javacpp.opencv_stitching.Stitcher;
 
 import java.io.File;
@@ -11,16 +14,15 @@ import java.net.URISyntaxException;
  * Created by mewx on 10/04/17.
  */
 public class Main {
-    private static String basePath;
 
     public static void main(String[] args) throws URISyntaxException {
         // usage: java -jar xxx.jar folderName
-        basePath = Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-        basePath = basePath.substring(0, basePath.lastIndexOf(File.separator) + 1) + "rc" + File.separator;
+        String basePath = Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+        basePath = basePath.substring(0, basePath.lastIndexOf(File.separator) + 1);
         System.out.println(basePath);
 
 //        String[] fileList = (String[]) Arrays.stream(getFileNameList(basePath)).filter(a -> a.startsWith(args[0])).toArray();
-        String[] fileList = getFileNameList(basePath + args[0]);
+        String[] fileList = getFileNameList(basePath + "rc" + File.separator + args[0]);
         if (fileList.length == 0) {
             System.out.println("No file found.");
             return;
@@ -29,7 +31,9 @@ public class Main {
         }
         for (String temp : fileList) System.out.println(temp);
 
-        // next
+        // stitching
+        new Main().run(basePath + "rc" + File.separator + args[0] + File.separator,
+                fileList, args[0] + "_result.png");
 
     }
 
@@ -43,7 +47,25 @@ public class Main {
         return strings;
     }
 
-    public void run() {
-        Stitcher s;
+    public void run(String basePath, String[] fileNames, String targetName) {
+        MatVector imgs = new MatVector();
+        for (String name : fileNames) {
+            System.out.println("Reading: " + basePath + name);
+            Mat img = opencv_imgcodecs.imread(basePath + name);
+            imgs.resize(imgs.size() + 1);
+            imgs.put(imgs.size() - 1, img);
+        }
+
+        Mat pano = new Mat();
+        Stitcher stitcher = Stitcher.createDefault(false);
+        int status = stitcher.stitch(imgs, pano);
+
+        if (status != Stitcher.OK) {
+            System.out.println("Can't stitch images, error code = " + status);
+            return;
+        }
+
+        opencv_imgcodecs.imwrite(basePath + targetName, pano);
+        System.out.println("Images stitched together to make " + basePath + targetName);
     }
 }
