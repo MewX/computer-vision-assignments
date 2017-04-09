@@ -1,4 +1,4 @@
-<project name="ec-assignments1" basedir="." default="rebuild-run">
+<project name="cv-assignments1" basedir="." default="rebuild-run">
     <property name="src.dir"     value="src"/>
     <property name="opencv.dir"     value="/home/mewx/libs/opencv-3.2.0"/>
     <!-- jar dir -->
@@ -75,8 +75,9 @@
             <sysproperty key="java.library.path" path="${opencv.dir}/lib"/>
             <classpath>
                 <path refid="classpath"/>
-                <path location="${jar.dir}/${ant.project.name}.jar ${prefix}"/>
+                <path location="${jar.dir}/${ant.project.name}.jar"/>
             </classpath>
+            <arg value="${prefix}"/>
         </java>
     </target>
 </project>
