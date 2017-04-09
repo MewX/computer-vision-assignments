@@ -16,15 +16,15 @@
     </target>
     <target name="compile">
         <mkdir dir="${classes.dir}"/>
-        <javac includeantruntime="false" srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath"/>
+        <javac includeantruntime="false" debug="on" srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath"/>
     </target>
     <target name="test-jar" depends="compile">
         <mkdir dir="${jar.dir}"/>
 
         <!-- copy resource files -->
-        <mkdir dir="${classes.dir}/rc"/>
-        <copy includeemptydirs="false" todir="${classes.dir}/rc">
-            <fileset dir="rc"/>
+        <mkdir dir="${jar.dir}/rc"/>
+        <copy includeemptydirs="false" todir="${jar.dir}/rc">
+            <fileset dir="rc-test"/>
         </copy>
 
         <jar destfile="${jar.dir}/cvtest.jar" basedir="${classes.dir}">
@@ -48,8 +48,8 @@
         <mkdir dir="${jar.dir}"/>
 
         <!-- copy resource files -->
-        <mkdir dir="${classes.dir}/rc"/>
-        <copy includeemptydirs="false" todir="${classes.dir}/rc">
+        <mkdir dir="${jar.dir}/rc"/>
+        <copy includeemptydirs="false" todir="${jar.dir}/rc">
             <fileset dir="rc"/>
         </copy>
 
