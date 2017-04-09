@@ -1,7 +1,8 @@
 <project name="ec-assignments1" basedir="." default="rebuild-run">
     <property name="src.dir"     value="src"/>
+    <property name="opencv.dir"     value="/home/mewx/libs/opencv-3.2.0"/>
     <!-- jar dir -->
-    <property name="lib.dir"     value="/home/mewx/libs/opencv-3.2.0/bin"/>
+    <property name="lib.dir"     value="${opencv.dir}/bin"/>
     <path id="classpath">
         <fileset dir="${lib.dir}" includes="**/*.jar"/>
     </path>
@@ -19,6 +20,13 @@
     </target>
     <target name="test-jar" depends="compile">
         <mkdir dir="${jar.dir}"/>
+
+        <!-- copy resource files -->
+        <mkdir dir="${classes.dir}/rc"/>
+        <copy includeemptydirs="false" todir="${classes.dir}/rc">
+            <fileset dir="rc"/>
+        </copy>
+
         <jar destfile="${jar.dir}/cvtest.jar" basedir="${classes.dir}">
             <manifest>
                 <attribute name="Main-Class" value="org.mewx.cv.assignment1.CVTest"/>
@@ -28,7 +36,7 @@
     <target name="test-run" depends="test-jar">
         <java fork="true" classname="org.mewx.cv.assignment1.CVTest">
             <!-- lib dir -->
-            <sysproperty key="java.library.path" path="/home/mewx/libs/opencv-3.2.0/lib"/>
+            <sysproperty key="java.library.path" path="${opencv.dir}/lib"/>
             <classpath>
                 <path refid="classpath"/>
                 <path location="${jar.dir}/cvtest.jar"/>
@@ -38,6 +46,13 @@
 
     <target name="jar" depends="compile">
         <mkdir dir="${jar.dir}"/>
+
+        <!-- copy resource files -->
+        <mkdir dir="${classes.dir}/rc"/>
+        <copy includeemptydirs="false" todir="${classes.dir}/rc">
+            <fileset dir="rc"/>
+        </copy>
+
         <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
             <manifest>
                 <attribute name="Main-Class" value="${main-class}"/>
@@ -47,7 +62,7 @@
     <target name="run" depends="jar">
         <java fork="true" classname="${main-class}">
             <!-- lib dir -->
-            <sysproperty key="java.library.path" path="/home/mewx/libs/opencv-3.2.0/lib"/>
+            <sysproperty key="java.library.path" path="${opencv.dir}/lib"/>
             <classpath>
                 <path refid="classpath"/>
                 <path location="${jar.dir}/${ant.project.name}.jar"/>
