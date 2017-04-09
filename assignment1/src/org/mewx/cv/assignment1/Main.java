@@ -31,6 +31,8 @@ public class Main {
         }
         for (String temp : fileList) System.out.println(temp);
 
+        // todo: try different file name orders
+
         // stitching
         new Main().run(basePath + "rc" + File.separator + args[0] + File.separator,
                 fileList, args[0] + "_result.png");
