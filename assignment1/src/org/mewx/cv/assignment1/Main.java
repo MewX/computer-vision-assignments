@@ -8,6 +8,7 @@ import org.bytedeco.javacpp.opencv_stitching.Stitcher;
 
 import java.io.File;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 
 /**
  * This is main class for assignment 1.
@@ -26,16 +27,18 @@ public class Main {
         if (fileList.length == 0) {
             System.out.println("No file found.");
             return;
-        } else {
-            System.out.println("Found files:");
         }
-        for (String temp : fileList) System.out.println(temp);
 
         // todo: try different file name orders
+        Arrays.sort(fileList, String::compareTo); // alphabetic
+//        Arrays.sort(fileList, Comparator.reverseOrder()); // alphabetic
 
-        // stitching
-        new Main().run(basePath + "rc" + File.separator + args[0] + File.separator,
-                fileList, args[0] + "_result.png");
+        for (int i = 0; i < 1; i ++) {
+            System.out.println("i = " + i);
+            // stitching
+            new Main().run(basePath + "rc" + File.separator + args[0] + File.separator,
+                    fileList, args[0] + "_result.png");
+        }
 
     }
 
@@ -50,6 +53,9 @@ public class Main {
     }
 
     public void run(String basePath, String[] fileNames, String targetName) {
+        // remove file first
+        new File(basePath + targetName).delete();
+
         MatVector imgs = new MatVector();
         for (String name : fileNames) {
             System.out.println("Reading: " + basePath + name);
@@ -60,7 +66,12 @@ public class Main {
 
         Mat pano = new Mat();
         Stitcher stitcher = Stitcher.createDefault(false);
+
+        // measure
+        long timestamp = System.currentTimeMillis();
         int status = stitcher.stitch(imgs, pano);
+        timestamp = System.currentTimeMillis() - timestamp;
+        System.out.println("Used time: " + timestamp);
 
         if (status != Stitcher.OK) {
             System.out.println("Can't stitch images, error code = " + status);
