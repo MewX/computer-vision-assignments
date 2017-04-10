@@ -1,0 +1,67 @@
+     [java] Used time: 985
+     [java] Used time: 914
+     [java] Used time: 1035
+     [java] Used time: 897
+     [java] Used time: 1024
+     [java] Used time: 1069
+     [java] Used time: 900
+     [java] Used time: 1259
+     [java] Used time: 1000
+     [java] Used time: 1048
+     [java] Used time: 1033
+     [java] Used time: 1044
+     [java] Used time: 945
+     [java] Used time: 958
+     [java] Used time: 888
+     [java] Used time: 1040
+     [java] Used time: 1044
+     [java] Used time: 915
+     [java] Used time: 1268
+     [java] Used time: 923
+     [java] Used time: 889
+     [java] Used time: 741
+     [java] Used time: 1029
+     [java] Used time: 898
+     [java] Used time: 992
+     [java] Used time: 1053
+     [java] Used time: 945
+     [java] Used time: 923
+     [java] Used time: 912
+     [java] Used time: 757
+
+
+985
+914
+1035
+897
+1024
+1069
+900
+1259
+1000
+1048
+1033
+1044
+945
+958
+888
+1040
+1044
+915
+1268
+923
+889
+741
+1029
+898
+992
+1053
+945
+923
+912
+757
+
+avg:	977.6
+max:	1268
+min:	741
+
