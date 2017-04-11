@@ -68,22 +68,25 @@ At the beginning, I tried to experiment in a measurable way, which can produce s
     \end{itemize}
 \end{enumerate}
 
+% but
+
 \begin{figure}[t]
     \begin{center}
-    \includegraphics[width=0.9\linewidth]{fail}
+        \includegraphics[width=0.9\linewidth]{fail}
     \end{center}
     \caption{The source image is a screenshot (plane), and the 3 images for stitching are cropped from the source image.
-    Even when I tried with more than 70\% shared area, the result is still out of expectation.}
-    \label{fig:f}
+    Even when I tried using images with more than 70\% shared area, the result is still out of expectation.}
+    \label{fig:fail}
 \end{figure}
 
-% \begin{figure}[H]
-% 	\centering
-%     \includegraphics[width=\textwidth]{fail}
-% 	\caption[Failed test]
-% 	{The source image is a screenshot (plane), and the 3 images for stitching are cropped from the source image. Even when I tried with more than 70\% shared area, the result is still out of expectation.}
-%     \label{fig:f}
-% \end{figure}
+\begin{figure}[H]
+    \begin{center}
+        \includegraphics[width=0.9\textwidth]{horizontal_motion}
+    \end{center}
+    \caption{The source images are captured by horizontal moving camera, so the space projection structure is changed in every image,
+    and it is impossible to match features using mentioned image matching algorithm.}
+    \label{fig:cameramotion}
+\end{figure}
 
 
 Hypothesis and testing, and resulting.
