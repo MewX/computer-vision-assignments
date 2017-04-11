@@ -3,6 +3,7 @@ out/
 build/
 *.class
 *.iml
+*.pdf
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
