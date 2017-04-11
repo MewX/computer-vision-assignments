@@ -2,6 +2,7 @@
 
 \usepackage{cvpr}
 \usepackage[utf8]{inputenc}
+\usepackage{gensymb}
 
 \cvprfinalcopy
 \def\cvprPaperID{a1700831} % *** Enter the CVPR Paper ID here
@@ -37,11 +38,37 @@ This is the description.
 \subsection{Limitation and Improvements}
 Analyse the limitation and improvements.
 
+Brown and Lowe's method uses the feature that the images are assumed to be captured by a centric camera,
+because in the ``straightening'' method, they ignore the case that the camera is not moved horizontally.
+They use a camera position detection idea to straighten the long curved image into long stright image.
+Therefore, if the images are taken horizontally, they will be unable to be stitched together in that no two images can match by features.
+
+% improvements
+
 
 \section{Testing}
+At the beginning, I tried to experiment in this way:
+\begin{enumerate}
+    \item Select a long image, \textit{(I would like to produce the images from panorama.)}
+    \item Draw a horizontal line with 2 pixel width from left most to right most in vertical center, \textit{(Create a baseline for benchmark.)}
+    \item Split the image into three images: left, middle and right (each adjacent two images have 30\% shared area, and have same width), \textit{(Make it simple, use only three images.)}
+    \item Distort the left image to make the length of its left edge is two times larger than the length of its right edge, \textit{(Simulate the projection effect.)}
+    \item Distort the right image to make the length of its right edge is two times large than the length of its left edge, \textit{(Simulate the projection effect.)}
+    \item Rotate the left image for 30\degree clockwise, \textit{(Just a random value to test , because idealy, the feature matching algorithm can match SIFT feature in any orientation.)}
+    \item Zoom out to fit the rectangle window, \textit{(The image should still be a rectangle.)}
+    \item Stitch them with Brown and Lowe's methods, \textit{(Do stitching.)}
+    \item Measure the following values, \textit{(Metric test.)} 
+    \begin{itemize}
+        \item The rooted mean square 
+    \end{itemize}
+\end{enumerate}
+
+
 Hypothesis and testing, and resulting.
 
 Anaylse the outcome of the tests, and give a useful conclusion.
+
+\subsection{}
 
 
 % Bibliography
