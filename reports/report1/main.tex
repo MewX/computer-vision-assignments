@@ -5,6 +5,7 @@
 \usepackage{gensymb}
 \usepackage{graphicx}
 \graphicspath{ {imgs/} }
+\usepackage{float}
 
 \cvprfinalcopy
 \def\cvprPaperID{a1700831} % *** Enter the CVPR Paper ID here
@@ -64,17 +65,25 @@ At the beginning, I tried to experiment in a measurable way, which can produce s
         \item The average running time with 30 repeatitions in millisecond,
         \item The mean square error (MSE) of the baseline's curvity,
         \item The minimum distance between each two baselines' endpoints in pixel, larger than 0 if the three baseline segments (each image has one) are not stitched together,
-        \item 
     \end{itemize}
 \end{enumerate}
 
-\begin{figure}[h]
-	\centering
-    \includegraphics[width=\textwidth]{fail}
-	\caption[Failed test]
-	{The source image is a screenshot (plane), and the 3 images for stitching are cropped from the source image. Even when I tried with more than 70\% shared area, the result is still out of expectation.}
+\begin{figure}[t]
+    \begin{center}
+    \includegraphics[width=0.9\linewidth]{fail}
+    \end{center}
+    \caption{The source image is a screenshot (plane), and the 3 images for stitching are cropped from the source image.
+    Even when I tried with more than 70\% shared area, the result is still out of expectation.}
     \label{fig:f}
 \end{figure}
+
+% \begin{figure}[H]
+% 	\centering
+%     \includegraphics[width=\textwidth]{fail}
+% 	\caption[Failed test]
+% 	{The source image is a screenshot (plane), and the 3 images for stitching are cropped from the source image. Even when I tried with more than 70\% shared area, the result is still out of expectation.}
+%     \label{fig:f}
+% \end{figure}
 
 
 Hypothesis and testing, and resulting.
