@@ -20,17 +20,22 @@ SA, Australia\\
 
 % abstract
 \begin{abstract}
-This is the assignment 1 report, describing and testing a method for creating mosaics from a set of smaller images.
+This is the assignment 1 report, describing and testing a method for creating panorama from a set of smaller images.
 The related codes are using Java binding version of OpenCV, and it contains my partial implemented improved method, which is used to test my hypothesis and improvements.
 \end{abstract}
 
 
 \section{The Problem}
-This is the description of the problem \cite{origin}.
+The problem is to stitch many images of different small areas into a large panorama image.
+However, the images standing for small areas often have lots of issues when stitching.
+The images can have different rotations, scales, affine transformations, photometric problems, moving objects and so on.
+
+To stitch the images into a large panorama, the method must overcome most of the issues above,
+and the most important thing is to make sure the image look normal and less noticeable.
 
 
 \section{Brown and Lowe's Method}
-This is the background.
+This is the background \cite{origin}.
 
 \subsection{Description}
 This is the description.
