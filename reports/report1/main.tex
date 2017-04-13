@@ -86,6 +86,8 @@ In the Section 9 of the original paper, Brown and Lowe put some potential future
     \item
         Camera position is often moved (at slightly) when trying to take lots of photos in real life.
         That means the image aligning cannot be finished by simple reshaping because of scene depth and shading.
+        However, Brown and Lowe's method is the kind of ``simple'' method, it uses the feature that those images are assumed to be captured by a centric camera.
+        So, they use a camera position detection idea to straighten the long curved image into long straight image.
         Usually, the resulting image can contain overlapping effects.
 
         Some of them can be deblurred by Bascle \textit{et al.}'s method \cite{bascle}.
@@ -122,9 +124,7 @@ In the Section 9 of the original paper, Brown and Lowe put some potential future
     \label{fig:cameramotion}
 \end{figure*}
 
-The weaknesses above are still cucrrent research topics, which are not easy to solve by myself.
-
-I have two patching extensions.
+The weaknesses above are still cucrrent research topics, which are not easy to solve by myself. Instead, I have the following two patching extensions.
 
 The \textbf{first} one is a more specific panorama stitching case - scanning image by moving camera.
 This problem is different from the first mentioned weakness above.
@@ -159,15 +159,6 @@ The optimization patching solution is to reduce the $p_{min}$ in Fomula (12) in 
     \caption{Images with pure colors.}
     \label{fig:pc}
 \end{figure}
-
-% blur effect
-
-Brown and Lowe's method uses the feature that the images are assumed to be captured by a centric camera,
-because in the ``straightening'' method, they ignore the case that the camera is not moved horizontally.
-They use a camera position detection idea to straighten the long curved image into long straight image.
-Therefore, if the images are taken horizontally, they will be unable to be stitched together in that no two images can match by features.
-
-% improvements
 
 
 \section{Testing}
