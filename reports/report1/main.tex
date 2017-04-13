@@ -122,10 +122,40 @@ In the Section 9 of the original paper, Brown and Lowe put some potential future
     \label{fig:cameramotion}
 \end{figure*}
 
-The weaknesses above are still the research topics, which are not easy to solve by me.
+The weaknesses above are still cucrrent research topics, which are not easy to solve by myself.
 
-I thought about a specific panorama stitching case - scanning document by moving camera.
-This problem is different from the first mentioned weakness.
+I have two patching extensions.
+
+The first one is a more specific panorama stitching case - scanning image by moving camera.
+This problem is different from the first mentioned weakness above.
+The images to be stitched are in the same plane, so there are no view depth and no shading effect.
+However, no matter how the photos are taken, by a centric camera or by a moving camera, the resulting images cannot look like a plane.
+i.e. For local photos of a whole graph, the resulting image is expected to be like a scanned graph.
+
+To solve this problem, the algorithm should accept another parameter ``plane mode'',
+after applying Brown and Lowe's method, the algorithm should find the rectangle outlines of the plane area
+(in the resulting, it is often a curved quadrangle, Fig \ref{fig:cml}).
+Then, reshape the final image to make the outline be a rectangle.
+
+\begin{figure}[t]
+    \begin{center}
+        \includegraphics[width=0.9\linewidth]{line_combine}
+    \end{center}
+    \caption{After the stitching method, straight lines are often reshaped into curves.}
+    \label{fig:cml}
+\end{figure}
+
+The second extension is when the image doesn't comtain enought features.
+When using the OpenCV implementation, if the image is very simple,
+
+\begin{figure}[t]
+    \begin{center}
+        \includegraphics[width=0.9\linewidth]{pure_color}
+    \end{center}
+    \caption{Images with pure colors.}
+    \label{fig:pc}
+\end{figure}
+
 
 %%%%%%%%%%%%%%%%%%%%% todo
 
@@ -136,7 +166,7 @@ This method assumes that the provided images are from the same camera, and the c
 
 Brown and Lowe's method uses the feature that the images are assumed to be captured by a centric camera,
 because in the ``straightening'' method, they ignore the case that the camera is not moved horizontally.
-They use a camera position detection idea to straighten the long curved image into long stright image.
+They use a camera position detection idea to straighten the long curved image into long straight image.
 Therefore, if the images are taken horizontally, they will be unable to be stitched together in that no two images can match by features.
 
 % improvements
