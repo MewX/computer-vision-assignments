@@ -48,12 +48,17 @@ they can be stitched together by superposing the matching features, and vise ver
 The psedocodes on the paper have already show the outline the stitching algorithm.
 Here are the more detailed description:
 \begin{enumerate}
-%% todo: add some numeric analysis
+% todo: add some numeric analysis
     \item Read all input images, \textit{(if the number of images is less than two, \textbf{fail} because one image does not need to be stitched.)}
     \item Extract SIFT \cite{sift} features from all images,
     \item Store $k$-nearest neighbor features using a k-d tree \cite{knn}, \textit{(increase the accuracy for feature matching.)}
-    \item Match the potential images using RANSAC \cite{ransac}, and verify them using a probabilistic model %%todo cite , \textit{(if the probability is not high enough, and there isn't any image can be stitched with this image, \textbf{fail})}
-    \item 
+    % todo: more on probabilistic model
+    \item Match the potential images using RANSAC \cite{ransac}, and verify them using a probabilistic model, \textit{(if the probability is not high enough, and there isn't any image can be stitched with this image, \textbf{fail}.)}
+    \item Reshape and align the images using bundle adjustment \cite{bm}, \textit{(make the stitching seamless.)}
+    \item Straighten the whole panorama by silumating the centric camera and projection effect, \textit{(eliminate issues caused by different camera orientation.)}
+    \item Gain compensation by averaging the pixels of overlapped areas, \textit{(remove the significant stitching edge.)}
+    \item Apply multi-band blending to the final images, \textit{(remove blur effect caused by inaccurate stitching.)}
+    \item Output the panorama image.
 \end{enumerate}
 
 This is the description.% idea of simulating a wider view filed len
@@ -138,6 +143,10 @@ Beis, J. and Lowe, D. 1997. ``Shape indexing using approximate nearest neighbor 
 \bibitem {ransac}
 Fischler, M. and Bolles, R. 1981. Random sample consensus: ``A paradigm for model fitting with application to image analysis and automated cartography'',
 \textit{Communications of the ACM}, 24:381–395.
+
+\bibitem {bm}
+Triggs, W., McLauchlan, P., Hartley, R., and Fitzgibbon, A. 1999. ``Bundle adjustment: A modern synthesis,''
+\textit{In Vision Algorithms: Theory and Practice}, number 1883 in LNCS. Springer-Verlag. Corfu, Greece, pp. 298–373.
 
 \bibitem {surf}
 H., Bay, T., Tuytelaars and L., Van Gool, ``Surf: Speeded up robust features,''
