@@ -67,25 +67,68 @@ Here are the more detailed description:
         Straighten the whole panorama by silumating the centric camera and projection effect,
         \textit{(eliminate issues caused by different camera orientation.)}
     \item \label{n:g}
-        Gain compensation by averaging the pixels of overlapped areas,
+        Gain compensation by weighted averaging the pixels of overlapped areas,
         \textit{(remove significant stitching edges.)}
     \item \label{n:a}
         Apply multi-band blending to the final images,
-        \textit{(removed overlapped effect produced by gain compensation, caused by inaccurate match.)}
+        \textit{(removed overlapping effect produced by gain compensation, caused by inaccurate match.)}
     \item \label{n:o}
         Output the panorama image.
 \end{enumerate}
 
+% idea of simulating a wider view filed len
 % todo: add some numeric analysis
 % todo: more on probabilistic model
 
 \subsection{Limitation and Improvements}
-In the Section 9 of the original paper, Brown and Lowe put some potential future works which are the weaknesses of current version of method.
+In the Section 9 of the original paper, Brown and Lowe put some potential future works which are the weaknesses and possible improvements for current version of method.
 \begin{itemize}
-    \item Camera position is often moved (at slightly) when trying to tak lots of photos.
+    \item
+        Camera position is often moved (at slightly) when trying to take lots of photos in real life.
+        That means the image aligning cannot be finished by simple reshaping because of scene depth and shading.
+        Usually, the resulting image can contain overlapping effects.
+
+        Some of them can be deblurred by Bascle \textit{et al.}'s method \cite{bascle}.
+        The rest of them might require 3D modeling for perfect fix.
+    \item
+        Scene can also be dynamical. Moving objects like trees and birds can also affect the stitching result.
+        Although multi-band blending can solve some kinds of blur effect caused by slight motion,
+        it doesn't work for large motion case.
+
+        The way to solve it might be detecting the same object, and keeping one complete copy or removing the incomplete object.
+    \item
+        Advanced camera modeling. This is what I first came out when I saw the title with ``using invariant feature''.
+        The method is limited into 2D space. In 3D space, objects might obstruct the view, and when the camera moves, the objects will distort a lot.
+        Just like Fig \ref{fig:cameramotion}, the camera orientation is vertical to the horizon line on the wall, and the motion direction is parallel with the wall.
+        It is very clear that the table and chair on the images distort heavily.
+        
+        With 3D modeling or simulating a scanner, the issue can be solved.
+    \item
+        Color correction is also not perfect.
+        Influenced by gain compensation, the overlapped area is evaluated by error rate first,
+        then the gain parameters for the whole images are calculated by a quadratic objective function.
+        However, the resulting image can be easily found to have abnormal colors in overlapped areas (e.g. the overlapped area is yellowing).
+
+        One way to solve the problem mentioned in the paper is to uniforming the colors from a common source first, like sky.
+        In this way, some issues caused by over exposure images can also be fixed.
 \end{itemize}
 
-% idea of simulating a wider view filed len
+\begin{figure*}
+    \begin{center}
+        \includegraphics[width=0.9\textwidth]{horizontal_motion}
+    \end{center}
+    \caption{The source images are captured by horizontal moving camera, so the space projection structure is changed in every image,
+    and it is impossible to match features using mentioned image matching algorithm.}
+    \label{fig:cameramotion}
+\end{figure*}
+
+The weaknesses above are still the research topics, which are not easy to solve by me.
+
+I thought about a specific panorama stitching case - scanning document by moving camera.
+This problem is different from the first mentioned weakness.
+
+%%%%%%%%%%%%%%%%%%%%% todo
+
 This method assumes that the provided images are from the same camera, and the camera is always in the center of panorama space.
 
 
@@ -134,14 +177,6 @@ At the beginning, I tried to experiment in a measurable way, which can produce s
     \label{fig:fail}
 \end{figure}
 
-\begin{figure*}
-    \begin{center}
-        \includegraphics[width=0.9\textwidth]{horizontal_motion}
-    \end{center}
-    \caption{The source images are captured by horizontal moving camera, so the space projection structure is changed in every image,
-    and it is impossible to match features using mentioned image matching algorithm.}
-    \label{fig:cameramotion}
-\end{figure*}
 
 
 Hypothesis and testing, and resulting.
@@ -172,6 +207,10 @@ Fischler, M. and Bolles, R. 1981. Random sample consensus: ``A paradigm for mode
 \bibitem {bm}
 Triggs, W., McLauchlan, P., Hartley, R., and Fitzgibbon, A. 1999. ``Bundle adjustment: A modern synthesis,''
 \textit{In Vision Algorithms: Theory and Practice}, number 1883 in LNCS. Springer-Verlag. Corfu, Greece, pp. 298–373.
+
+\bibitem {bascle}
+Bascle, B., Blake, A., and Zisserman, A. 1996. ``Motion deblurring and super-resolution from and image sequence,''
+\textit{In Proceedings of the 4th European Conference on Computer Vision (ECCV96)}. Springer-Verlag, pp. 312–320.
 
 \bibitem {surf}
 H., Bay, T., Tuytelaars and L., Van Gool, ``Surf: Speeded up robust features,''
