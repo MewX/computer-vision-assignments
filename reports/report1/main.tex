@@ -126,7 +126,7 @@ The weaknesses above are still cucrrent research topics, which are not easy to s
 
 I have two patching extensions.
 
-The first one is a more specific panorama stitching case - scanning image by moving camera.
+The \textbf{first} one is a more specific panorama stitching case - scanning image by moving camera.
 This problem is different from the first mentioned weakness above.
 The images to be stitched are in the same plane, so there are no view depth and no shading effect.
 However, no matter how the photos are taken, by a centric camera or by a moving camera, the resulting images cannot look like a plane.
@@ -134,7 +134,7 @@ i.e. For local photos of a whole graph, the resulting image is expected to be li
 
 To solve this problem, the algorithm should accept another parameter ``plane mode'',
 after applying Brown and Lowe's method, the algorithm should find the rectangle outlines of the plane area
-(in the resulting, it is often a curved quadrangle, Fig \ref{fig:cml}).
+(in the resulting, it is often a curved quadrangle. (see the yellow lines in Fig \ref{fig:cml}.)
 Then, reshape the final image to make the outline be a rectangle.
 
 \begin{figure}[t]
@@ -145,8 +145,12 @@ Then, reshape the final image to make the outline be a rectangle.
     \label{fig:cml}
 \end{figure}
 
-The second extension is when the image doesn't comtain enought features.
-When using the OpenCV implementation, if the image is very simple,
+The \textbf{second} extension is when the image doesn't comtain enought features.
+Using the OpenCV implementation, if the images are very simple (like Fig. \ref{fig:pm}),
+the probabilistic model will tell that the images don't have enough probabilities to match correctly.
+The they cannot be stitched.
+
+The optimization patching solution is to reduce the $p_{min}$ in Fomula (12) in the original paper when there are not potential matchable images.
 
 \begin{figure}[t]
     \begin{center}
@@ -155,12 +159,6 @@ When using the OpenCV implementation, if the image is very simple,
     \caption{Images with pure colors.}
     \label{fig:pc}
 \end{figure}
-
-
-%%%%%%%%%%%%%%%%%%%%% todo
-
-This method assumes that the provided images are from the same camera, and the camera is always in the center of panorama space.
-
 
 % blur effect
 
