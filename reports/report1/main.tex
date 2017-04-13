@@ -81,7 +81,7 @@ Here are the more detailed description:
 % todo: more on probabilistic model
 
 \subsection{Limitation and Improvements}
-In the Section 9 of the original paper, Brown and Lowe put some potential future works which are the weaknesses and possible improvements for current version of method.
+In Section 9 of the original paper, Brown and Lowe put some potential future works which are the weaknesses and possible improvements for current version of method.
 \begin{itemize}
     \item
         Camera position is often moved (at slightly) when trying to take lots of photos in real life.
@@ -163,10 +163,17 @@ The optimization patching solution is to reduce the $p_{min}$ in Fomula (12) in 
 
 \section{Testing}
 % non-free SIFT
-\textit{(the OpenCV implementation uses speeded up robust features (SURF) \cite{surf} to generate the feature)}
+By default, the latest OpenCV's ``Stitcher'' class uses speeded up robust features (SURF) \cite{surf} to generate the feature,
+rather than SIFT which is selected by Brown and Lowe's method.
+However, the source code of SIFT feature extration method is not included in the latest version.
+The reason from the official \cite{cvcontri} is that SIFT method is a commercial method, and it is not free to use.
 
+As well, I spent a lot of (wrong) time to deal with Java Binding for the ``Stitcher'' class.
+If I have to change the OpenCV methods, I have to write it in C++.
+% todo: add some more information
+So, if I have more time after writing the reports, I will added more codes to implement the SIFT method and KNN matching method.
 
-
+\subsection{Quality Test}
 At the beginning, I tried to experiment in a measurable way, which can produce some mathematical benchmark results. Here are the steps:
 \begin{enumerate}
     \item Select a long image, \textit{(produce the images from panorama.)}
@@ -202,7 +209,7 @@ Hypothesis and testing, and resulting.
 
 Anaylse the outcome of the tests, and give a useful conclusion.
 
-\subsection{}
+\subsection{Performance Test}
 
 
 % Bibliography
@@ -234,6 +241,10 @@ Bascle, B., Blake, A., and Zisserman, A. 1996. ``Motion deblurring and super-res
 \bibitem {surf}
 H., Bay, T., Tuytelaars and L., Van Gool, ``Surf: Speeded up robust features,''
 \textit{Lecture Notes in Computer Science}, Vol.3951, p.404, 2006.
+
+\bibitem {cvcontri}
+OpenCV / opencv\_contrib,
+\textit{https://github.com/opencv/opencv\_contrib}
 
 \end{thebibliography}
 
