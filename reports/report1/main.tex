@@ -8,7 +8,7 @@
 \usepackage{float}
 
 \cvprfinalcopy
-\def\cvprPaperID{a1700831} % *** Enter the CVPR Paper ID here
+\def\cvprPaperID{a1700831}
 
 
 % begin of document
@@ -29,12 +29,12 @@ The related codes are using Java binding version of OpenCV, and it contains my p
 
 
 \section{The Problem}
-The problem is to stitch many images of different small areas into a large panorama image.
-However, the images standing for small areas often have lots of issues when stitching.
+The problem is to stitch many small images representing for different part of the area space into a large panorama image.
+However, the small images often have lots of issues when stitching them together.
 The images can have different rotations, scales, affine, projective transformations, photometric problems, moving objects and so on.
 
 To stitch the images into a large panorama, the method must overcome most of the issues above,
-and the most important thing is to make sure the image look normal and less noticeable.
+and the most important thing is to make sure the image look normal and edges are less noticeable.
 
 
 \section{Brown and Lowe's Method}
@@ -42,29 +42,54 @@ The method is being discovered for a long time. But none of them can perform bet
 Brown and Lowe's method can overcome the issues caused by variant orientations, zoomings, and do color corrections and moving object detection to some extend.
 
 The method is based on invariant features appearing in multiple images. If the combination of invariant features in two images match with each other,
-they can be stitched together by superposing the matching features, and vise versa, they cannot. 
+they can be stitched together by superposing the matching features, and vise versa, they cannot stitch images if they don't have invariant features. 
 
 \subsection{Description}
 The psedocodes on the paper have already show the outline the stitching algorithm.
 Here are the more detailed description:
 \begin{enumerate}
-% todo: add some numeric analysis
-    \item Read all input images, \textit{(if the number of images is less than two, \textbf{fail} because one image does not need to be stitched.)}
-    \item Extract SIFT \cite{sift} features from all images,
-    \item Store $k$-nearest neighbor features using a k-d tree \cite{knn}, \textit{(increase the accuracy for feature matching.)}
-    % todo: more on probabilistic model
-    \item Match the potential images using RANSAC \cite{ransac}, and verify them using a probabilistic model, \textit{(if the probability is not high enough, and there isn't any image can be stitched with this image, \textbf{fail}.)}
-    \item Reshape and align the images using bundle adjustment \cite{bm}, \textit{(make the stitching seamless.)}
-    \item Straighten the whole panorama by silumating the centric camera and projection effect, \textit{(eliminate issues caused by different camera orientation.)}
-    \item Gain compensation by averaging the pixels of overlapped areas, \textit{(remove the significant stitching edge.)}
-    \item Apply multi-band blending to the final images, \textit{(remove blur effect caused by inaccurate stitching.)}
-    \item Output the panorama image.
+    \item
+        Read all input images,
+        \textit{(if the number of images is less than two, \textbf{fail} because one image does not need to be stitched.)}
+    \item \label{n:e}
+        Extract SIFT \cite{sift} features from all images,
+    \item \label{n:k}
+        Store $k$-nearest neighbor features using a k-d tree \cite{knn},
+        \textit{(increase the accuracy for feature matching.)}
+    \item \label{n:m}
+        Match the potential images using RANSAC \cite{ransac}, and verify them using a probabilistic model;
+        a feature of this method is the images can be divided as disjoint set which means small images from differnt scenes can be distinguished and stitched separately,
+        \textit{(if the probability is not high enough, and there isn't any image can be stitched with this image, \textbf{fail}.)}
+    \item \label{n:r}
+        Reshape and align the images using bundle adjustment \cite{bm},
+        \textit{(make the stitching seamless.)}
+    \item \label{n:s}
+        Straighten the whole panorama by silumating the centric camera and projection effect,
+        \textit{(eliminate issues caused by different camera orientation.)}
+    \item \label{n:g}
+        Gain compensation by averaging the pixels of overlapped areas,
+        \textit{(remove significant stitching edges.)}
+    \item \label{n:a}
+        Apply multi-band blending to the final images,
+        \textit{(removed overlapped effect produced by gain compensation, caused by inaccurate match.)}
+    \item \label{n:o}
+        Output the panorama image.
 \end{enumerate}
 
-This is the description.% idea of simulating a wider view filed len
+% todo: add some numeric analysis
+% todo: more on probabilistic model
 
 \subsection{Limitation and Improvements}
-Analyse the limitation and improvements.
+In the Section 9 of the original paper, Brown and Lowe put some potential future works which are the weaknesses of current version of method.
+\begin{itemize}
+    \item Camera position is often moved (at slightly) when trying to tak lots of photos.
+\end{itemize}
+
+% idea of simulating a wider view filed len
+This method assumes that the provided images are from the same camera, and the camera is always in the center of panorama space.
+
+
+% blur effect
 
 Brown and Lowe's method uses the feature that the images are assumed to be captured by a centric camera,
 because in the ``straightening'' method, they ignore the case that the camera is not moved horizontally.
