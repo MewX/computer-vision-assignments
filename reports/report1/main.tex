@@ -168,31 +168,45 @@ rather than SIFT which is selected by Brown and Lowe's method.
 However, the source code of SIFT feature extration method is not included in the latest version.
 The reason from the official \cite{cvcontri} is that SIFT method is a commercial method, and it is not free to use.
 
-As well, I spent a lot of (wrong) time to deal with Java Binding for the ``Stitcher'' class.
+As well, I spent a plenty of (wrong) time on dealing with Java Binding for the ``Stitcher'' class,
+because by default the stitching class is not included in official Java binding class.
 If I have to change the OpenCV methods, I have to write it in C++.
 % todo: add some more information
 So, if I have more time after writing the reports, I will added more codes to implement the SIFT method and KNN matching method.
+
+For metric test, I came up with two types of tests: quality test and performance test.
+The quality test will evaluate the quality of resulting images, whereas the performance test will measure the running statistical information.
 
 \subsection{Quality Test}
 At the beginning, I tried to experiment in a measurable way, which can produce some mathematical benchmark results. Here are the steps:
 \begin{enumerate}
     \item Select a long image, \textit{(produce the images from panorama.)}
     \item Draw a horizontal line with 2 pixel width from left most to right most in vertical center, \textit{(create a baseline for benchmark, but the line should not affect the extraccted feature set of the original images.)}
-    \item Split the image into three images: left, middle and right (each adjacent two images have 30\% shared area, and have same width), \textit{(make it simple, use only three images.)}
+    \item \label{bm:sp} Split the image into three images: left, middle and right (each adjacent two images have 30\% shared area, and have same width), \textit{(make it simple, use only three images.)}
     \item Distort the left image to make the length of its left edge is two times larger than the length of its right edge, \textit{(simulate the projection effect.)}
     \item Distort the right image to make the length of its right edge is two times large than the length of its left edge, \textit{(simulate the projection effect.)}
     \item Rotate the left image for 30\degree clockwise, \textit{(just a random value to test , because idealy, the feature matching algorithm can match SIFT feature in any orientation.)}
-    \item Zoom out to fit the rectangle window, \textit{(the image should still be a rectangle.)}
+    \item \label{bm:zoom} Zoom out to fit the rectangle window, \textit{(the image should still be a rectangle.)}
     \item Stitch them with Brown and Lowe's methods, \textit{(do stitching.)}
     \item Measure the following values, \textit{(metric test.)} 
     \begin{itemize}
         \item The average running time with 30 repeatitions in millisecond,
         \item The mean square error (MSE) of the baseline's curvity,
-        \item The minimum distance between each two baselines' endpoints in pixel, larger than 0 if the three baseline segments (each image has one) are not stitched together,
+        \item The minimum distance between each two baselines' endpoints in pixel,
+              which is larger than 0 if the three baseline segments (each image has one) are not stitched together,
+        \item The average image difference between the original long image and resulting image.
+              This can be finished by patching Brown and Lowe's algorithm. After bundle adjustment, the image will be applied a gain compensation.
+              After the gain compensation step, calculate the sum of RGB difference between the ``before'' image and ``after'' images.
     \end{itemize}
 \end{enumerate}
 
-% but
+However, the OpenCV implementation doesn't work on the benchmark method above, because there are not enough features matched evaluated by the probabilistic model.
+
+One defact in the benchmark method is, the shared area selected in Step \ref{bm:sp} is too small to be kept in Step \ref{bm:zoom}.
+
+Another defact of the benchmark method is as shown in Fig \ref{fig:fail}.
+If the distortion in Step \ref{bm:zoom} is very arbitrary, the features sometimes cannot be detected successfully.
+(The reason why I chose screenshot was that it could contain more useful features and less distractive featuers than normal pictures).
 
 \begin{figure}[t]
     \begin{center}
@@ -203,13 +217,18 @@ At the beginning, I tried to experiment in a measurable way, which can produce s
     \label{fig:fail}
 \end{figure}
 
-
-
-Hypothesis and testing, and resulting.
-
-Anaylse the outcome of the tests, and give a useful conclusion.
+Thus, the quality test requires a simple single-variable controlled experiment.
+The images should be as simpler as possible, and the number of features should be as larger as possible.
 
 \subsection{Performance Test}
+Performance is often evaluated by the time complexity and space complexity.
+However, by following the methods from the paper, it is not available for evaluating its complexities,
+because each step can be optimzied by mathematical algorithms. 
+As well, for the OpenCV implementation, the complexities are decided by the implementation of its data structures.
+Therefore, the performance is not easy to be expressed by time or space complexities.
+
+\subsection{Method Attack and Test Conclusion}
+Anaylse the outcome of the tests, and give a useful conclusion.
 
 
 % Bibliography
