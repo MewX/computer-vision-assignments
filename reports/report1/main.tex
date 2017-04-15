@@ -164,6 +164,7 @@ The optimization patching solution is to reduce the $p_{min}$ in Formula (12) in
 % non-free SIFT
 By default, the latest OpenCV's ``Stitcher'' class uses speeded up robust features (SURF) \cite{surf} to generate the feature,
 rather than SIFT which is selected by Brown and Lowe's method.
+SURF is proved to be faster and more robust than SIFT \cite{cmp}.
 However, the source code of SIFT feature extraction method is not included in the latest version.
 The reason from the official \cite{cvcontri} is that SIFT method is a commercial method, and it is not free to use.
 
@@ -204,6 +205,7 @@ However, the OpenCV implementation doesn't work on the benchmark method above, b
 One defect in the benchmark method is, the shared area selected in Step \ref{bm:sp} is too small to be kept in Step \ref{bm:zoom}.
 
 Another defect of the benchmark method is as shown in Fig \ref{fig:fail}.
+Shared areas between the input images should be large enough, otherwise, the algorithm cannot find enough features to match.
 If the distortion in Step \ref{bm:zoom} is very arbitrary, the features sometimes cannot be detected successfully.
 (The reason why I chose screenshot was that it could contain more useful features and less distracted features than normal images).
 
@@ -237,7 +239,7 @@ As well in Section 2.2 the 2nd point, mult-band blending is easily affected by b
 If I produce two images with big objects in different position in each image, the resulting image will contain half, one, one and a half and two this objects.
 
 Similarly, Fig \ref{fig:pc} also show the weakness and solutions to the probabilistic model for verifying images matching.
-It just doesn't work for simple images because the method is trying to simulating a wider view len, and simple images is not considered to be likely to appear.
+It just doesn't work for simple images because the method is trying to simulating a wider view camera len, and simple images is not considered to be likely to appear.
 However, the method can be improved by patching Brown and Lowe's method, which is already discussed in Section 2.2.
 
 Then I would like to perform some numeric testings.
@@ -267,7 +269,7 @@ but the performance is very sensitive to the number of noises which is determine
 
 
 % Bibliography
-\begin{thebibliography}{9}
+\begin{thebibliography}{99}
 \bibitem {origin}
 M. Brown and D. Lowe, ``Automatic panoramic image stitching using invariant features,''
 \textit{Int. J. Comput. Vision}, vol. 74, no. 1, pp. 59–73, 2007.
@@ -275,6 +277,11 @@ M. Brown and D. Lowe, ``Automatic panoramic image stitching using invariant feat
 \bibitem {sift}
 D. G. Lowe, ``Distinctive Image Features from Scale-Invariant Keypoints,''
 \textit{International Journal of Computer Vision}, vol. 60, 2004.
+
+\bibitem {cmp}
+P. M. Panchal, S. R. Panchal, S. K. Shah, ``A Comparison of SIFT and SURF,''
+\textit{International Journal of Innovative Research in Computer and communication Engineering}, vol. 1, issue 2, 2013
+
 
 \bibitem {knn}
 Beis, J. and Lowe, D. 1997. ``Shape indexing using approximate nearest neighbor search in high-dimensional spaces,''
