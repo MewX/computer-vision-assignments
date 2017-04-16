@@ -23,18 +23,18 @@ SA, Australia\\
 
 % abstract
 \begin{abstract}
-This is the assignment 1 report, describing and testing a method for creating panorama from a set of smaller images.
-The related codes are using Java binding version of OpenCV, and it contains my partial implemented improved method, which is used to test my hypothesis and improvements.
+This is the assignment 1 report, describing and testing a method for creating panorama from a set of small images.
+The related codes are using Java binding version of OpenCV, and it contains my test codes to evaluate my hypothesis and program performance.
 \end{abstract}
 
 
 \section{The Problem}
 The problem is to stitch many small images representing for different part of the area space into a large panorama image.
-However, the small images often have lots of issues when stitching them together.
-The images can have different rotations, scales, affine, projective transformations, photometric problems, moving objects and so on.
+However, the small images often have lots of issues when being stitched together.
+The images can have different rotations, scales, affine or projective transformations, photometric problems, moving objects and so on.
 
 To stitch the images into a large panorama, the method must overcome most of the issues above,
-and the most important thing is to make sure the image look normal and edges are less noticeable.
+and the most important thing is to make sure the panorama looks normal and edges are less noticeable.
 
 
 \section{Brown and Lowe's Method}
@@ -45,8 +45,8 @@ The method is based on invariant features appearing in multiple images. If the c
 they can be stitched together by superimposing the matching features, and vise versa, they cannot stitch images if they don't have invariant features. 
 
 \subsection{Description}
-The psedocode on the paper have already show the outline the stitching algorithm.
-Here are the more detailed description:
+The psedocode on the paper has already shown the outline the stitching algorithm.
+Here are the more detailed description,
 \begin{enumerate}
     \item
         Read all input images,
@@ -59,7 +59,7 @@ Here are the more detailed description:
     \item \label{n:m}
         Match the potential images using RANSAC \cite{ransac}, and verify them using a probabilistic model;
         a feature of this method is the images can be divided as disjoint set which means small images from different scenes can be distinguished and stitched separately,
-        \textit{(if the probability is not high enough, and there isn't any image can be stitched with this image, \textbf{fail}.)}
+        \textit{(if the probabilistic prediction is not high enough, and there isn't any image can be stitched with this image, \textbf{fail}.)}
     \item \label{n:r}
         Reshape and align the images using bundle adjustment \cite{bm},
         \textit{(make the stitching seamless.)}
@@ -80,17 +80,17 @@ Here are the more detailed description:
 % todo: more on probabilistic model
 
 \subsection{Limitation and Improvements}
-In Section 9 of the original paper, Brown and Lowe put some potential future works which are the weaknesses and possible improvements for current version of method.
+In Section 9 of the original paper, Brown and Lowe put some potential future works which are the weaknesses and possible improvements for current version of the method.
 \begin{itemize}
     \item
-        Camera position is often moved (at slightly) when trying to take lots of photos in real life.
-        That means the image aligning cannot be finished by simple reshaping because of scene depth and shading.
+        Camera position is often moved (at slightly) when trying to take lots of photos in real cases.
+        That means the image aligning cannot be finished by simple reshaping because of scene depth, shading and overlapping.
         However, Brown and Lowe's method is the kind of ``simple'' method, it uses the feature that those images are assumed to be captured by a centric camera.
-        So, they use a camera position detection idea to straighten the long curved image into long straight image.
-        Usually, the resulting image can contain overlapping effects.
+        Therefore, they use a camera position detection idea to straighten the long curved image into long straight image.
+        Usually, the resulting image can contain overlapping blur effects.
 
         Some of them can be deblurred by Bascle \textit{et al.}'s method \cite{bascle}.
-        The rest of them might require 3D modeling for perfect fix.
+        The rest of them might require 3D modeling for a perfect fix.
     \item
         Scene can also be dynamical. Moving objects like trees and birds can also affect the stitching result.
         Although multi-band blending can solve some kinds of blur effect caused by slight motion,
@@ -98,12 +98,13 @@ In Section 9 of the original paper, Brown and Lowe put some potential future wor
 
         The way to solve it might be detecting the same object, and keeping one complete copy or removing the incomplete object.
     \item
-        Advanced camera modeling. This is what I first came out when I saw the title with ``using invariant feature''.
-        The method is limited into 2D space. In 3D space, objects might obstruct the view, and when the camera moves, the objects will distort a lot.
+        Advanced camera modeling. This is what I firstly came out when I saw the title with ``using invariant feature''.
+        The method is limited into 2D space due to using invariant features.
+        In 3D space, objects might obstruct the view, and when the camera moves, the objects will distort a lot.
         Just like Fig \ref{fig:cameramotion}, the camera orientation is vertical to the horizon line on the wall, and the motion direction is parallel with the wall.
         It is very clear that the table and chair on the images distort heavily.
         
-        With 3D modeling or simulating a scanner, the issue can be solved.
+        With 3D modeling or simulating a 2D scanner, the issue can be solved.
     \item
         Color correction is also not perfect.
         Influenced by gain compensation, the overlapped area is evaluated by error rate first,
@@ -111,7 +112,7 @@ In Section 9 of the original paper, Brown and Lowe put some potential future wor
         However, the resulting image can be easily found to have abnormal colors in overlapped areas (e.g. the overlapped area is yellowing).
 
         One way to solve the problem mentioned in the paper is to uniforming the colors from a common source first, like sky.
-        In this way, some issues caused by over exposure images can also be fixed.
+        In this way, some issues caused by over exposed images can also be fixed.
 \end{itemize}
 
 \begin{figure*}
@@ -125,16 +126,16 @@ In Section 9 of the original paper, Brown and Lowe put some potential future wor
 
 The weaknesses above are still current research topics, which are not easy to solve by myself. Instead, I have the following two patching extensions.
 
-The \textbf{first} one is a more specific panorama stitching case - scanning image by moving camera.
+The \textbf{first} one is a more specific panorama stitching case - scanning plane information (images, documents, etc.) by moving camera.
 This problem is different from the first mentioned weakness above.
 The images to be stitched are in the same plane, so there are no view depth and no shading effect.
 However, no matter how the photos are taken, by a centric camera or by a moving camera, the resulting images cannot look like a plane.
-i.e. For local photos of a whole graph, the resulting image is expected to be like a scanned graph.
+i.e. For local photos of a whole picture, the resulting image is expected to be like a scanned picture.
 
-To solve this problem, the algorithm should accept another parameter ``plane mode'',
+To solve this problem, the algorithm should accept another parameter ``in plane mode'',
 after applying Brown and Lowe's method, the algorithm should find the rectangle outlines of the plane area
 (in the resulting, it is often a curved quadrangle. (see the yellow lines in Fig \ref{fig:cml}.)
-Then, reshape the final image to make the outline be a rectangle.
+Then, reshape the final panorama to make the outline a rectangle.
 
 \begin{figure}[t]
     \begin{center}
@@ -147,9 +148,9 @@ Then, reshape the final image to make the outline be a rectangle.
 The \textbf{second} extension is when the image doesn't contain enough features.
 Using the OpenCV implementation, if the images are very simple (like Fig. \ref{fig:pm}),
 the probabilistic model will tell that the images don't have enough probabilities to match correctly.
-The they cannot be stitched.
+Then, they cannot be stitched.
 
-The optimization patching solution is to reduce the $p_{min}$ in Formula (12) in the original paper when there are not potential matchable images.
+The optimization patching solution is to reduce the $p_{min}$ in Formula (12) in the original paper when there is no more potential matchable images.
 
 \begin{figure}[t]
     \begin{center}
@@ -164,17 +165,17 @@ The optimization patching solution is to reduce the $p_{min}$ in Formula (12) in
 % non-free SIFT
 By default, the latest OpenCV's ``Stitcher'' class uses speeded up robust features (SURF) \cite{surf} to generate the feature,
 rather than SIFT which is selected by Brown and Lowe's method.
-However, the source code of SIFT feature extraction method is not included in the latest version.
+However, the source code of SIFT feature extraction method is not included in the latest OpenCV.
 The reason from the official \cite{cvcontri} is that SIFT method is a commercial method, and it is not free to use.
 
-As well, I spent a plenty of (wrong) time on dealing with Java Binding for the ``Stitcher'' class,
+As well, I spent plenty of (wrong) time on dealing with Java Binding for the ``Stitcher'' class,
 because by default the stitching class is not included in official Java binding class.
 If I have to change the OpenCV methods, I have to write it in C++.
 % todo: add some more information
-So, if I have more time after writing the reports, I will added more codes to implement the SIFT method and KNN matching method.
+So, if I have more time after writing the reports, I could be able to add more codes to implement the SIFT method and KNN matching method.
 
 For metric test, I came up with two types of tests: quality test and performance test.
-The quality test will evaluate the quality of resulting images, whereas the performance test will measure the running statistical information.
+The quality test will evaluate the quality of resulting panorama, whereas the performance test will measure the statistical information while runnning.
 
 \subsection{Quality Test}
 At the beginning, I tried to experiment in a measurable way, which can produce some mathematical benchmark results. Here are the steps:
@@ -187,7 +188,7 @@ At the beginning, I tried to experiment in a measurable way, which can produce s
     \item Rotate the left image for 30\degree clockwise, \textit{(just a random value to test , because ideally, the feature matching algorithm can match SIFT feature in any orientation.)}
     \item \label{bm:zoom} Zoom out to fit the rectangle window, \textit{(the image should still be a rectangle.)}
     \item Stitch them with Brown and Lowe's methods, \textit{(do stitching.)}
-    \item Measure the following values, \textit{(metric test.)} 
+    \item Measure the following values, \textit{(benchmark.)} 
     \begin{itemize}
         \item The average running time with 30 repeats in millisecond,
         \item The mean square error (MSE) of the baseline's curvity,
@@ -258,12 +259,13 @@ Increased by & 54.48\% & 108.00\% & 76.30\% \\
 \end{tabular}
 \end{center}
 \caption{Numeric comparison for adding new noises (images are stored in rc/yosemite\_noise). The noises are added online \cite{noise}, and arguments are: 50 noises, 50 strength. Each set of images are calculated by 30 repeats.}
+\label{t1}
 \end{table}
 
-As is shown in the table, after adding noises, the calculation time is significantly increased.
-And the noises affect both SIFT and SURF feature extractions.
+As is shown in the Table \ref{t1}, after adding noises, the calculation time is significantly increased.
+And the noises affect the running time of both SIFT and SURF feature extraction methods.
 As a result, Brown and Lowe's method is very robust because the added noises images can still be stitched together,
-but the performance is very sensitive to the number of noises which is determined by the invariant feature based idea.
+but the performance is very sensitive to the number of noises because it is determined by the invariant feature based idea.
 
 
 % Bibliography
