@@ -29,4 +29,3 @@ for i in range(1, 1 + picNum):
     print("done")
 
     cv2.imwrite("out/" + fileName, img)
-    cv2.destroyAllWindows()
