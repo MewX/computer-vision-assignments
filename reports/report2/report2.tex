@@ -4,7 +4,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{gensymb}
 \usepackage{graphicx}
-% todo: change the image folder
+% TODO: change the image folder
 \graphicspath{ {report2-imgs/} }
 \usepackage{float}
 
@@ -25,8 +25,8 @@ SA, Australia\\
 % abstract
 \begin{abstract}
 This assignment 2 report describes the Viola and Jones's method{\cite{origin}} which can detect a specified object very rapidly.
-Their method uses a machine learning method named AdaBoost to both select 
-% todo !!!!!!!!!!!!
+Their method uses a machine learning method named AdaBoost \cite{adaboost} to both select
+% TODO: !!!!!!!!!!!!
 
 \end{abstract}
 
@@ -42,14 +42,45 @@ camera features, image quality, etc. can often bring issues to the face detectio
 And to simplify the problem, the method from Viola and Jones demonstrates with a frontal face detection system,
 which means the effects of ``head direction'' and ``face integrity'' are ignored.
 
-\section{Background}
-% todo: describe the competing approaches to the problem
+\section{Background} \label{sec:bg}
+% TODO: describe the competing approaches to the problem
 
 
 \section{Viola and Jones's Method}
+Viola and Jones's method is designed to be applied in any object detection case, and the detection speed is extremely fast around the publish year (2001).
+In the paper, all details of the algorithm are demonstrated in doing face detection.
+Comparing to other face detection methods whose speeds are faster than Viola and Jones's method,
+those methods' speeds are based on checking image difference between the adjacent frames,
+while Viola and Jones's method in the demo proceeds each frame independently which means it can achieve even higher speed using the frame difference.
 
-% the OpenCV implementation, the different models
-% the training data is unknown although I searched for XXXXXX
+The method has three main steps:
+\begin{enumerate}
+    \item Compute integral image and Harr-like features;
+    \item Construct a classifier by selecting important features using AdaBoost;
+    \item Combine classifiers complex classifiers into a cascading structure;
+\end{enumerate}
+
+The final cascading classifiers are the final model, classifiers in each layer can reject most features.
+Therefore, the computing time gets reduced significantly.
+
+\subsection{Computing features}
+The features used in this paper are Haar basis functions motivated by Papageorgiou et al.'s work. (mentioned in Section \ref{sec:bg})
+The features are represented in a rectangle split into two, three or four. Then, divide the sub-rectangles into two classes: A and B.
+The feature is calculated by the difference of the sum of all pixels marked under class A and the sum of all pixels marked under class B.
+
+To calculate the features, the authors introduce an ``integral image'', which is an array with the same size of the original image ($width \times height$).
+Unlike the image pixel array, each cell of the integral image array stores the accumulated pixel sum from top left to current pixel in original image.
+
+Having integral image, the features can be calculated easily in $O(width \times height)$ time,
+each sub-rectangle can be easily calculated by subtracting related integral image cells.
+In the paper, the rectangles are tried in each multiply of 24x24 area (i.e. 24x24, 48x48, etc. areas in input images).
+Therefore, the exhaustive search set is super large even for a normal images. (For a 384x288 image, the set contains around 180,000 features.)
+
+\subsection{Constructing classifiers}
+
+
+\subsection{Building cascading classifiers}
+
 
 \section{Hypothesis}
 % \subsection{Limitation and Improvements}
@@ -60,10 +91,18 @@ The performance is fully depending on the training data.
 
 The prediction result is very stable, using the same model to predict will always get the same result.
 
-% how to come over the slightly tilted face (the Haar basis features can do that)
-In principle, any kind of face can be detected if the training data have this 
+% TODO: how to come over the slightly tilted face (the Haar basis features can do that)
+In principle, any kind of face can be detected if the training data have this
+
+% TODO: the OpenCV implementation, the different models
+% TODO: the training data is unknown although I searched for XXXXXX
 
 \section{Experiments}
+
+\section{Extensions}
+% TODO: the adjacent frames difference used in video face detection
+
+%
 
 \section{Conclusion}
 
@@ -71,7 +110,11 @@ In principle, any kind of face can be detected if the training data have this
 \begin{thebibliography}{9}
 \bibitem {origin}
 P. Viola and M. Jones, ``Rapid object detection using a boosted cascade of simple features,''
-\textit{Proc. IEEE Conf. Comput. Vis. Pattern Recog.}, 2001, pp. 511–518.
+In \textit{Proc. IEEE Conf. Comput. Vis. Pattern Recog.}, 2001, pp. 511–518.
+
+\bibitem {adaboost}
+Y. Freund and R.E. Schapire, ``A decision-theoretic generalization of on-=line learning and an application to boosting,''
+In \textit{Computational Learning Theory: Eurocolt '95}, pages 23-27, Springer-Verlag, 1995.
 
 
 \end{thebibliography}
