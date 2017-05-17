@@ -24,25 +24,37 @@ SA, Australia\\
 
 % abstract
 \begin{abstract}
-This assignment 2 report describes the Viola and Jones's method{\ref{origin}} which can detect a specified object very rapidly.
+This assignment 2 report describes the Viola and Jones's method{\cite{origin}} which can detect a specified object very rapidly.
 Their method uses a machine learning method named AdaBoost to both select 
-
+% todo !!!!!!!!!!!!
 
 \end{abstract}
 
 
 \section{The Problem}
+The problem is to detect face(s) in an input image, and output the image with each face marked with a bounding box.
+Although it looks very simple and we don't need to recognize a specific face, the challenge is to detect all the faces in real time.
+Because in any normal image, there are so many possible positions and sizes for a single face,
+and it's impossible to try every sub-window of them due to the huge computational cost.
+
+Moreover, an input image is not always predictable. The head direction, face integrity, environmental light brightness,
+camera features, image quality, etc. can often bring issues to the face detection problem.
+And to simplify the problem, the method from Viola and Jones demonstrates with a frontal face detection system,
+which means the effects of ``head direction'' and ``face integrity'' are ignored.
 
 \section{Background}
 % todo: describe the competing approaches to the problem
 
+
 \section{Viola and Jones's Method}
 
 % the OpenCV implementation, the different models
+% the training data is unknown although I searched for XXXXXX
 
 \section{Hypothesis}
 % \subsection{Limitation and Improvements}
 % https://blog.bluecrossmn.com/future-face-minnesota-look-willmar/ - the picture source
+% http://web01a.elitedaily.com/envision/photographer-brilliantly-captures-the-many-different-facial-expressions-we-all-go-through-photos/
 
 The performance is fully depending on the training data.
 
