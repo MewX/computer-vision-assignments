@@ -57,8 +57,11 @@ while Viola and Jones's method in the demo proceeds each frame independently whi
 The method has three main steps:
 \begin{enumerate}
     \item Compute integral image and Harr-like features;
-    \item Construct a classifier by selecting important features using AdaBoost;
-    \item Combine classifiers complex classifiers into a cascading structure;
+    \item In each cascading stage:
+          \begin{enumerate}
+              \item Select the important features, discard the rest features;
+              \item Update the accumulated classifier by adjusting thresholds (weights of selected features) using AdaBoost;
+          \end{enumerate}
 \end{enumerate}
 
 The final cascading classifiers are the final model, classifiers in each layer can reject most features.
@@ -77,12 +80,11 @@ each sub-rectangle can be easily calculated just by subtracting related integral
 In the paper, the rectangles are tried in each multiply of 24x24 area (i.e. 24x24, 48x48, etc. areas in input images).
 Therefore, the exhaustive search set is super large even for a normal images. (For a 384x288 image, the set contains around 180,000 features.)
 
-\subsection{Constructing classifiers}
+\subsection{Cascading stages}
 As is mentioned in Section \ref{sec:cf}, the exhaustive set is super large, and it's impossible to detect every single rectangular feature.
-The idea is to select only key features in an image, which can significantly produce the correct prediction result.
-And therefore, the time cost will get reduced.
-
-% TODO: The idea is using a simple classifier (in AdaBoost, called weak learner) to select only the key features in an image, which can significantly produce the prediction results.
+The idea is to select only key features in an image, the key features in each stage (or say layer) can discard most useless features.
+Then, put the selected features into the next layer, so that most computations will be put on distinguishing useful features.
+This can significantly produce the correct prediction result, and therefore, the time cost will get reduced.
 
 \subsubsection{Selecting important features}
 In selecting important features part, the authors used their previous work \cite{imgret}.
@@ -103,7 +105,7 @@ and returns the feature for which the model is most sensitive. Figure \ref{fig:h
     \label{fig:hsf}
 \end{figure}
 
-\subsubsection{Building classifiers for selected features}
+\subsubsection{Constructing classifiers for selected features}
 Foe each selected important features, we still don't know the relationship between them and the image classification.
 That means, to separate the with-face images and non-face images perfectly, we need a threshold as the divider of the two kind of images.
 They introduce the an important indicator of the resulting classifier - ``optimal threshold'', which can make sure that
@@ -122,10 +124,10 @@ where $h_{j}(x)$ is the $j$-th classifier among AdaBoost's final strong classifi
 $p_{j}$ is used to mark the positive (1, representing face) and negative (-1, representing non-face).
 $f_{j}$ is a Haar-like features, and a threshold $\theta _{j}$ is used for best separating positive and negative features.
 
-In the demonstration from the paper, the all the 24x24 pixel rectangles are marked positive in an with-face image,
+In the demonstration from the paper, all the 24x24 pixel rectangles are marked positive in a with-face image,
 whereas all the 24x24 pixel rectangles are marked negative in a non-face image.
 The error rates of the weak learners selected in early round can often achieve between 0.1 to 0.3 which is quite good.
-However, when entering later rounds, the error rates increase to around 0.5.
+However, when entering later rounds, the error rates increase to around 0.5, because the task gets more difficult.
 
 Combining all the weak learners, the final classifier will be:
 $$h(x)=\left\{\begin{matrix*}[l]
@@ -134,13 +136,10 @@ $$h(x)=\left\{\begin{matrix*}[l]
 \end{matrix*}\right.$$
 where $\alpha _{t}$ is calculated by accumulated weighted error rate which is calculated during the procedure of selecting weak learners in AdaBoost algorithm.
 $h_{i}(x)$ is the weak learner mentioned in Equation (\ref{eq:hjx}). $T$ is the total round number, which is also the number of weak learners.
-In the paper, the number of $T$ depends on the current layer (which will be discussed in Section \ref{sec:bcc}).
+In the paper, the number of $T$ is not mentioned, but in AdaBoost it's often a round counter,
+and the choice of value depends on the prediction performance (which will be discussed in Section \ref{sec:hypo}).
 
-\subsection{Building cascading classifiers} \label{sec:bcc}
-
-% TODO: the total round of AdaBoost
-
-\section{Hypothesis}
+\section{Hypothesis} \label{sec:hypo}
 % \subsection{Limitation and Improvements}
 % https://blog.bluecrossmn.com/future-face-minnesota-look-willmar/ - the picture source
 % http://web01a.elitedaily.com/envision/photographer-brilliantly-captures-the-many-different-facial-expressions-we-all-go-through-photos/
@@ -159,6 +158,7 @@ In principle, any kind of face can be detected if the training data have this
 
 % TODO: the OpenCV implementation, the different models
 % TODO: the training data is unknown although I searched for XXXXXX
+% TODO: the total round of AdaBoost
 
 \section{Experiments}
 
