@@ -8,6 +8,7 @@
 % TODO: change the image folder
 \graphicspath{ {report2-imgs/} }
 \usepackage{float}
+\usepackage{url}
 
 \cvprfinalcopy
 \def\cvprPaperID{a1700831}
@@ -25,10 +26,14 @@ SA, Australia\\
 
 % abstract
 \begin{abstract}
-This assignment 2 report describes the Viola and Jones's method{\cite{origin}} which can detect a specified object very rapidly.
-Their method uses a machine learning method named AdaBoost \cite{adaboost} to both select
-% TODO: !!!!!!!!!!!!
+This assignment 2 report describes the Viola and Jones's method \cite{origin} which can detect a specified object very rapidly.
+Their method uses a machine learning method named AdaBoost \cite{adaboost} to both select important features and classify the images.
+The challenge is the potential feature space is very large, therefore, it is very necessary to discard the useless features to reduce the computational cost.
+To solve this problem, a cascade structure of the final classifier is introduced. It can reduce a majority of features in each layer,
+and most classifiers are applied only on the useful features to provide more accurate prediction result.
 
+The related codes are in Python 3, using the OpenCV C++ binding for Python,
+and it contains my testing codes to evaluate my hypothesis and program performance.
 \end{abstract}
 
 
@@ -84,20 +89,20 @@ Therefore, the exhaustive search set is super large even for a normal images. (F
 As is mentioned in Section \ref{sec:cf}, the exhaustive set is super large, and it's impossible to detect every single rectangular feature.
 The idea is to select only key features in an image, the key features in each stage (or say layer) can discard most useless features.
 Then, put the selected features into the next layer, so that most computations will be put on distinguishing useful features.
-This can significantly produce the correct prediction result, and therefore, the time cost will get reduced apparently.
-The cascade structure is shown in Figure \ref{fig:cs}.
+And therefore, the computational cost is reduce significantly. The cascade structure is shown in Figure \ref{fig:cs}.
 
 \begin{figure}[t]
     \begin{center}
-        \includegraphics[width=0.9\linewidth]{cascading}
+        \includegraphics[width=0.8\linewidth]{cascading}
     \end{center}
-    \caption{The cascading structure of the whole algorithm process. Data are picked from the original paper Section 5.}
-    \label{fig:hsf}
+    \caption{The cascading structure of the whole algorithm process. Data are picked from the original paper Section 5. Every classifier is trained under AdaBoost.}
+    \label{fig:cs}
 \end{figure}
 
 \subsubsection{Selecting important features}
 In selecting important features part, the authors used their previous work \cite{imgret}.
 In that method, some features are firstly selected as highly selective features(HSF) which are based on their even previous work \cite{imgdb}.
+
 HSF are a such set of features that they can respond to only a small percentage of images in the input (e.g. 5\%).
 The respond in practical means applying convolutions between HSF and input can produce very large numerical values, and it is very efficient.
 In the paper, such HSF are the important features.
@@ -148,28 +153,79 @@ $h_{i}(x)$ is the weak learner mentioned in Equation (\ref{eq:hjx}). $T$ is the 
 In the paper, the number of $T$ is not mentioned, but in AdaBoost it's often a round counter,
 and the choice of value depends on the prediction performance (which will be discussed in Section \ref{sec:hypo}).
 
-\section{Hypothesis} \label{sec:hypo}
+\section{Hypothesis and Experiments} \label{sec:hypo}
+To train the model is not feasible, due to the required data are super large. And the data I checked from famous institutions are testing data only.
+Therefore I used the two pre-trained models from OpenCV directly \cite{opencvmodels},
+
+\begin{itemize}
+    \item \textbf{haarcascade\_frontalface\_default.xml}
+
+          The default model for face detection with windows size (rectangle size) of 24x24, which is the same as what's mentioned in Viola and Jones's paper in 2001.
+          The difference is this model is better than the 2001 year's one.
+
+          I searched for plenty of websites, even checked the commit history of OpenCV documentation \cite{opencvdochistory}
+          and the history of the model files \cite{opencvmodelhistory}, that model was just committed by a user named ``vpisarev'' in 2013.
+
+    \item \textbf{haarcascade\_frontalface\_alt.xml}
+
+          This is slightly different with the default model, the windows size here is 20x20. The detection results are different from the default model.
+
+\end{itemize}
+
+% TODO:
 % \subsection{Limitation and Improvements}
 % https://blog.bluecrossmn.com/future-face-minnesota-look-willmar/ - the picture source
-% http://web01a.elitedaily.com/envision/photographer-brilliantly-captures-the-many-different-facial-expressions-we-all-go-through-photos/
 
+% TODO: the total round of AdaBoost
+
+
+\subsection{Single feature performs bad}
+In the partial demonstration in Section 3 of the original paper, the author showed that with 200 feature's classifier can achieve 95\% percent accurate.
+However, in the cascading structure, the first layer contains only one feature during the final results from Viola and Jones's paper (Figure \ref{fig:cs}).
+
+The authors already mention that no single feature can work perfectly, but the combination of selected features can works perfectly in Section 3.
+However, for the best performance, it is very essential to use only one feature to filter the all the features.
+As a result, training AdaBoost to fit only one feature has a large probability to lead into over-fitting.
+
+\subsection{Step size and scale size also affect the prediction result}
+
+\subsection{Overfit causes problems}
 AdaBoost can always overfit if the fit process keeps going on
 
-In second step: no single feature can work perfectly, but the combination of selected features can works perfectly
+The paper insists that in higher layers there should be more features for AdaBoost to fit the potential pattern.
 
+\subsection{Feature patterns are selected automatically}
 Although, the features selected (xxx) shown in the Figure 4 are xxxx, they are still automatically selected by AdaBoost!
 therefore, the performance is fully depending on the training data.
 
+\subsection{Predicting result is very stable}
 The prediction result is very stable, using the same model to predict will always get the same result.
 
-% TODO: how to come over the slightly tilted face (the Haar basis features can do that)
-In principle, any kind of face can be detected if the training data have this
+\subsection{Model performance highly depends on training data}
+In the motivation of this paper, any kind of face can be detected if the training data are provided.
+Therefore, for the training data, if we giving 10,000 images marked as an object, and many images marked as not an object,
+the resulting model should be able to detect that object from the input testing data.
 
-% TODO: the OpenCV implementation, the different models
-% TODO: the training data is unknown although I searched for XXXXXX
-% TODO: the total round of AdaBoost
+A more specific example, by Voila and Jones, they trianed the model with more than 10,000 marked images of frontal face.
+That means, if the face in images is not frontal or the face is tilted, the model cannot detect it. (See Figure \ref{fig:tilt} and Figure \ref{fig:tiltcor}.)
 
-\section{Experiments}
+\begin{figure}[t]
+    \begin{center}
+        \includegraphics[width=0.9\linewidth]{facial1}
+    \end{center}
+    \caption{The image containing tilted faces examined with modelled trained without tilted faces. This image is from random search \cite{facialimg}.}
+    \label{fig:tilt}
+\end{figure}
+
+\begin{figure}[t]
+    \begin{center}
+        \includegraphics[width=0.9\linewidth]{facial1_corrected}
+    \end{center}
+    \caption{The corrected predicting result, this proves that the facial expression is not the reason of not being detected.}
+    \label{fig:tiltcor}
+\end{figure}
+
+To come over this, the training image data set should contain lots of tilted faces.
 
 \section{Extensions}
 % TODO: the adjacent frames difference used in video face detection
@@ -186,7 +242,7 @@ P. Viola and M. Jones, ``Rapid object detection using a boosted cascade of simpl
 In \textit{Proc. IEEE Conf. Comput. Vis. Pattern Recog.}, 2001, pp. 511–518.
 
 \bibitem {adaboost}
-Y. Freund and R.E. Schapire, ``A decision-theoretic generalization of on-=line learning and an application to boosting,''
+Y. Freund and R.E. Schapire, ``A decision-theoretic generalization of online learning and an application to boosting,''
 In \textit{Computational Learning Theory: Eurocolt '95}, pages 23-27, Springer-Verlag, 1995.
 
 \bibitem {imgret}
@@ -197,6 +253,21 @@ In \textit{Proceedings of the IEEE Conference on Computer Vision and Pattern Rec
 J. S. DeBonet and P. Viola, ``Structure driven image database retrieval,''
 In \textit{Adv. Neur. Info. Proc. Sys.}, volume 10, 1998.
 
+\bibitem {opencvmodels}
+opencv/data/haarcascades at master - opencv/opencv,
+\url{https://github.com/opencv/opencv/tree/master/data/haarcascades}
+
+\bibitem {opencvdochistory}
+History for doc - opencv/opencv,
+\url{https://github.com/opencv/opencv/commits/master/doc}
+
+\bibitem {opencvmodelhistory}
+History for data/haarcascades - opencv/opencv,
+\url{https://github.com/opencv/opencv/commits/master/data/haarcascades}
+
+\bibitem {facialimg}
+These Amazing Photo Collages Display The Wide Range Of Human Emotions! Awesome Work!,
+\url{http://www.viralspell.com/amazing-photo-collages-display-wide-range-human-emotions-awesome-work/}
 
 \end{thebibliography}
 
