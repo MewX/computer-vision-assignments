@@ -187,12 +187,39 @@ The authors already mention that no single feature can work perfectly, but the c
 However, for the best performance, it is very essential to use only one feature to filter the all the features.
 As a result, training AdaBoost to fit only one feature has a large probability to lead into over-fitting.
 
-\subsection{Step size and scale size also affect the prediction result}
-
 \subsection{Overfit causes problems}
+% TODO!!!!!
 AdaBoost can always overfit if the fit process keeps going on
 
 The paper insists that in higher layers there should be more features for AdaBoost to fit the potential pattern.
+
+
+\subsection{Slicing step size, scaling step size and window size also affect the prediction result}
+Voila and Jones mention that with smaller slicing step size or/and smaller scale step size, the accuracy can be improved for a certain degree.
+Because the small step can capture more small features, and more difficult to lose small features.
+But they didn't mention the different performance between different window size.
+
+In my hypothesis, the smaller windows size is more sensitive to super small images.
+OpenCV provides two pre-trained models with difference windows sizes: 20x20 and 24x24.
+So, I tested them in very small images (Figure \ref{fig:ysmall} and \ref{fig:yori}).
+
+\begin{figure}[t]
+    \begin{center}
+        \includegraphics[width=0.9\linewidth]{yaleallsmall}
+    \end{center}
+    \caption{The images from Yale database \cite{yaleimages} are compressed into 40x30 size, and this is the results from 20x20 window size model. Two faces can be detected.}
+    \label{fig:ysmall}
+\end{figure}
+
+\begin{figure}[t]
+    \begin{center}
+        \includegraphics[width=0.9\linewidth]{yaleallsmall_ori}
+    \end{center}
+    \caption{The images from Yale database are compressed into 40x30 size, and this is the results from 24x24 window size model. None of the faces can be detected.}
+    \label{fig:yori}
+\end{figure}
+
+
 
 \subsection{Feature patterns are selected automatically}
 Although, the features selected (xxx) shown in the Figure 4 are xxxx, they are still automatically selected by AdaBoost!
@@ -264,6 +291,10 @@ History for doc - opencv/opencv,
 \bibitem {opencvmodelhistory}
 History for data/haarcascades - opencv/opencv,
 \url{https://github.com/opencv/opencv/commits/master/data/haarcascades}
+
+\bibitem {yaleimages}
+Yale Face Database,
+\url{http://vision.ucsd.edu/content/yale-face-database}
 
 \bibitem {facialimg}
 These Amazing Photo Collages Display The Wide Range Of Human Emotions! Awesome Work!,
