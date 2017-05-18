@@ -89,24 +89,26 @@ In selecting important features part, the authors used their previous work \cite
 In that method, some features are firstly selected as highly selective features(HSF) which are based on their even previous work \cite{imgdb}.
 HSF are a such set of features that they can respond to only a small percentage of images in the input (e.g. 5\%).
 The respond in practical means applying convolutions between HSF and input can produce very large numerical values, and it is very efficient.
+In the paper, such HSF are the important features.
 
-Additionally, due to the rarity of those features, they use AdaBoost to select and examine HSF.
-For each weak learner in that AdaBoost, it computes a two class Gaussian model for the positives and negatives,
-and returns the feature for which the model is most sensitive. Figure \ref{img:hsf} shows a set of HSF.
+Additionally, due to the rarity of those features, they use AdaBoost to select HSF.
+For each weak learner in that AdaBoost, it computes a two class Gaussian model for the with-face images and non-face images,
+and returns the feature for which the model is most sensitive. Figure \ref{fig:hsf} shows a set of HSF.
 
 \begin{figure}[t]
     \begin{center}
         \includegraphics[width=0.9\linewidth]{highly-selective-features}
     \end{center}
-    \caption{Sample highly selective features from Viola's previous paper \cite{imgret}}
+    \caption{Sample highly selective features from Viola's previous paper \cite{imgret}.}
     \label{fig:hsf}
 \end{figure}
 
 \subsubsection{Building classifiers for selected features}
-
-Therefore in practise, the algorithm selects single rectangle features which can best separates the faces and non-faces.
-The most important indicator of the resulting classifier is the ``optimal threshold'' which can achieve minimum number of examples are misclassified.
-So, in each round of AdaBoost algorithm, only the most optimal threshold is selected for the weak classifier (weak learner).
+Foe each selected important features, we still don't know the relationship between them and the image classification.
+That means, to separate the with-face images and non-face images perfectly, we need a threshold as the divider of the two kind of images.
+They introduce the an important indicator of the resulting classifier - ``optimal threshold'', which can make sure that
+when using a specific feature, minimum number of examples will be misclassified.
+And, in each round of AdaBoost algorithm, only the most optimal threshold is selected for the weak classifier (weak learner).
 
 In the paper, the weak learners are in this form:
 \begin{equation}
