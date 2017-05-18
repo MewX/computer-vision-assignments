@@ -287,8 +287,27 @@ That means, if the face in images is not frontal or the face is tilted, the mode
 
 To come over this, the training image data set should contain lots of tilted faces to some extend.
 
+\subsection{Haar-like features are very unstable for image noises}
+At the beginning, I think the Haar-like features are not sensitive to the noises in images,
+because the features use the sum of pixels, and noises are more like random added.
+Therefore, the accumulated value of random numbers should have very little impacts on the final sum.
+I didn't the experiment with coloured noises and grey noises, it shows the noise still have some certain impacts on the images.
+
+\begin{figure*}
+    \begin{center}
+        \includegraphics[width=0.9\textwidth]{11people-noised}
+    \end{center}
+    \caption{The noises \cite{noise} have significant impacts on the algorithm.}
+    \label{fig:tiltcor}
+\end{figure*}
+
+After this experiment, I think the reason might be the selected features have very high contrasts.
+And noised images cannot provide very apparent contrasts for the model.
+As a result, the Haar-like features are still sensitive to image noises.
+
 
 \section{Extensions}
+The performance of this algorithm is very satisfying, in the computation ability in 2001, it can pro
 % TODO: the adjacent frames difference used in video face detection
 % only recalculate the different parts
 
@@ -334,6 +353,10 @@ Yale Face Database,
 \bibitem {facialimg}
 These Amazing Photo Collages Display The Wide Range Of Human Emotions! Awesome Work!,
 \url{http://www.viralspell.com/amazing-photo-collages-display-wide-range-human-emotions-awesome-work/}
+
+\bibitem {noise}
+Add noise online,
+\url{http://pinetools.com/add-noise-image}
 
 \end{thebibliography}
 
