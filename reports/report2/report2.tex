@@ -8,7 +8,7 @@
 % TODO: change the image folder
 \graphicspath{ {report2-imgs/} }
 \usepackage{float}
-\usepackage{url}
+\PassOptionsToPackage{hyphens}{url}\usepackage{hyperref}
 
 \cvprfinalcopy
 \def\cvprPaperID{a1700831}
@@ -47,6 +47,7 @@ Moreover, an input image is not always predictable. The head direction, face int
 camera features, image quality, etc. can often bring issues to the face detection problem.
 And to simplify the problem, the method from Viola and Jones demonstrates with a frontal face detection system,
 which means the effects of ``head direction'' and ``face integrity'' are ignored.
+
 
 \section{Background} \label{sec:bg}
 % TODO: describe the competing approaches to the problem
@@ -153,6 +154,7 @@ $h_{i}(x)$ is the weak learner mentioned in Equation (\ref{eq:hjx}). $T$ is the 
 In the paper, the number of $T$ is not mentioned, but in AdaBoost it's often a round counter,
 and the choice of value depends on the prediction performance (which will be discussed in Section \ref{sec:hypo}).
 
+
 \section{Hypothesis and Experiments} \label{sec:hypo}
 To train the model is not feasible, due to the required data are super large. And the data I checked from famous institutions are testing data only.
 Therefore I used the two pre-trained models from OpenCV directly \cite{opencvmodels},
@@ -172,8 +174,19 @@ Therefore I used the two pre-trained models from OpenCV directly \cite{opencvmod
 
 \end{itemize}
 
+The overall performance of the pre-trained model with windows size of 24x24 are shown in Figure \ref{fig:overall}.
+And only one face is not detected, the reason might be the combined disturbance of light and shading direction, skin colour and glasses on face.
+
+\begin{figure}[t]
+    \begin{center}
+        \includegraphics[width=0.9\linewidth]{yaleall}
+    \end{center}
+    \caption{Images from Yale database \cite{yaleimages} are all with size of 320x243, and only one face (marked in red) is not detected which might
+    because the reason from light direction, skin colour and glasses.}
+    \label{fig:overall}
+\end{figure}
+
 % TODO:
-% \subsection{Limitation and Improvements}
 % https://blog.bluecrossmn.com/future-face-minnesota-look-willmar/ - the picture source
 
 % TODO: the total round of AdaBoost
@@ -185,14 +198,16 @@ However, in the cascading structure, the first layer contains only one feature d
 
 The authors already mention that no single feature can work perfectly, but the combination of selected features can works perfectly in Section 3.
 However, for the best performance, it is very essential to use only one feature to filter the all the features.
+In other words, the early layers are easy to be classified, unlike later layers which had to use lots features to classify accurately.
 As a result, training AdaBoost to fit only one feature has a large probability to lead into over-fitting.
 
 \subsection{Overfit causes problems}
-% TODO!!!!!
-AdaBoost can always overfit if the fit process keeps going on
+AdaBoost can always overfit if the fit process keeps going on.
+I believe select a proper total training round is more important.
 
-The paper insists that in higher layers there should be more features for AdaBoost to fit the potential pattern.
-
+The authors show an ROC curve (Figure 7 in original paper), which indicates that the more false positives are actually with higher correct detection rate.
+This looks disobeying my hypothesis, but I think the $X$-axis showed only 200 false positives among 75 million sub-windows.
+If the model is getting overfit, the number of false positives will get higher, whereas the correct detection rate will get dropped.
 
 \subsection{Slicing step size, scaling step size and window size also affect the prediction result}
 Voila and Jones mention that with smaller slicing step size or/and smaller scale step size, the accuracy can be improved for a certain degree.
@@ -201,13 +216,14 @@ But they didn't mention the different performance between different window size.
 
 In my hypothesis, the smaller windows size is more sensitive to super small images.
 OpenCV provides two pre-trained models with difference windows sizes: 20x20 and 24x24.
-So, I tested them in very small images (Figure \ref{fig:ysmall} and \ref{fig:yori}).
+So, I tested them in very small images and proved in Figure \ref{fig:ysmall} and \ref{fig:yori}.
+I also tested even smaller images, but none of the two models can detect any face in that images database.
 
 \begin{figure}[t]
     \begin{center}
         \includegraphics[width=0.9\linewidth]{yaleallsmall}
     \end{center}
-    \caption{The images from Yale database \cite{yaleimages} are compressed into 40x30 size, and this is the results from 20x20 window size model. Two faces can be detected.}
+    \caption{The images from Yale database are compressed into 40x30 size, and this is the results from 20x20 window size model. Two faces can be detected.}
     \label{fig:ysmall}
 \end{figure}
 
@@ -219,21 +235,38 @@ So, I tested them in very small images (Figure \ref{fig:ysmall} and \ref{fig:yor
     \label{fig:yori}
 \end{figure}
 
+Moreover, the smaller windows size are even more sensitive to the shade objects in face.
+I tested the hair above one eye as the shades in Figure \ref{fig:hair}, the smaller windows size didn't detect the face.
 
+\begin{figure*}
+    \begin{center}
+        \includegraphics[width=0.9\textwidth]{hairstyle}
+    \end{center}
+    \caption{The smaller window size model performs worse when there are shading objects above face, here the shade is the hair.
+    File names ended with ``\_ori'' are detected by 24x24 window size, with 3 of 3 images detected; the rest are by 20x20 small window size model, with 1 of 3 detected.}
+    \label{fig:hair}
+\end{figure*}
 
 \subsection{Feature patterns are selected automatically}
-Although, the features selected (xxx) shown in the Figure 4 are xxxx, they are still automatically selected by AdaBoost!
-therefore, the performance is fully depending on the training data.
+The first features selected shown in the Figure 4 in original paper are around eyes and noses, where the eyes are darker than the bridge of the nose.
+However, they are still automatically selected by AdaBoost, and it depends on the input data. The potential patterns like this are learnt by computer itself.
+If the input images contains lots of faces of back skin, the first feature might not because eyes are darker than the bridge of the nose.
 
-\subsection{Predicting result is very stable}
-The prediction result is very stable, using the same model to predict will always get the same result.
+\subsection{Training and predicting result is very stable}
+The prediction result is very stable, using the same model to predict the same data will always get the same result.
+
+The training process is also stable with the same configuration (step size, etc.),
+because the model is a certain value calculated in the iterations of AdaBoost,
+and this machine learning method does not use any randomized calculation.
+Unlike other methods like Random Forest Classifier, using a random decision tree,
+and each model are different with each other even with the same configuration.
 
 \subsection{Model performance highly depends on training data}
 In the motivation of this paper, any kind of face can be detected if the training data are provided.
 Therefore, for the training data, if we giving 10,000 images marked as an object, and many images marked as not an object,
 the resulting model should be able to detect that object from the input testing data.
 
-A more specific example, by Voila and Jones, they trianed the model with more than 10,000 marked images of frontal face.
+A more specific example, by Voila and Jones, they trained the model with more than 10,000 marked images of frontal faces.
 That means, if the face in images is not frontal or the face is tilted, the model cannot detect it. (See Figure \ref{fig:tilt} and Figure \ref{fig:tiltcor}.)
 
 \begin{figure}[t]
@@ -252,7 +285,8 @@ That means, if the face in images is not frontal or the face is tilted, the mode
     \label{fig:tiltcor}
 \end{figure}
 
-To come over this, the training image data set should contain lots of tilted faces.
+To come over this, the training image data set should contain lots of tilted faces to some extend.
+
 
 \section{Extensions}
 % TODO: the adjacent frames difference used in video face detection
@@ -260,10 +294,11 @@ To come over this, the training image data set should contain lots of tilted fac
 
 %
 
+
 \section{Conclusion}
 
 % Bibliography
-\begin{thebibliography}{9}
+\begin{thebibliography}{99}
 \bibitem {origin}
 P. Viola and M. Jones, ``Rapid object detection using a boosted cascade of simple features,''
 In \textit{Proc. IEEE Conf. Comput. Vis. Pattern Recog.}, 2001, pp. 511–518.
