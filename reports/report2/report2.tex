@@ -5,7 +5,6 @@
 \usepackage{gensymb}
 \usepackage{graphicx}
 \usepackage{mathtools}
-% TODO: change the image folder
 \graphicspath{ {report2-imgs/} }
 \usepackage{float}
 \PassOptionsToPackage{hyphens}{url}\usepackage{hyperref}
@@ -38,7 +37,7 @@ and it contains my testing codes to evaluate my hypothesis and program performan
 
 
 \section{The Problem}
-The problem is to detect face(s) in an input image, and output the image with each face marked with a bounding box.
+The problem is to detect face(s) from an input image, and output the image with each face marked with a bounding box.
 Although it looks very simple and we don't need to recognize a specific face, the challenge is to detect all the faces in real time.
 Because in any normal image, there are so many possible positions and sizes for a single face,
 and it's impossible to try every sub-window of them due to the huge computational cost.
@@ -200,7 +199,7 @@ As a result, training AdaBoost to fit only one feature has a large probability t
 AdaBoost can always overfit if the fit process keeps going on.
 I believe selecting a proper maxima training round is very important, but the authors didn't mention the training details in the paper.
 
-The authors show an ROC curve (Figure 7 in original paper), which indicates that the more false positives are actually with higher correct detection rate.
+The authors show a receiver operating characteristic (ROC) curve (Figure 7 in original paper), which indicates that the more false positives are actually with higher correct detection rate.
 This looks disobeying my hypothesis, but I think the $X$-axis showed only 200 false positives among 75 million sub-windows.
 If the model is getting overfit, the number of false positives will get higher, whereas the correct detection rate will get dropped.
 
@@ -246,6 +245,13 @@ I tested the hair above one eye as the shades in Figure \ref{fig:hair}, the smal
 The first features selected shown in the Figure 4 in original paper are around eyes and noses, where the eyes are darker than the bridge of the nose.
 However, they are still automatically selected by AdaBoost, and it depends on the input data. The potential patterns like this are learnt by computer itself.
 If the input images contains lots of faces of back skin, the first feature might not because eyes are darker than the bridge of the nose.
+
+\subsection{The algorithm is multi-threading friendly}
+In modern machine learning and computer vision area, multi-threading becomes more and more important due to the limitation of single CPU core.
+In this algorithm, the features can be calculated simultaneously in different threads, because they are independent with each other.
+When scanning the whole image, it can be divided into multiple block for multi-threading as well.
+
+AdaBoost is not multi-threading friendly natively, because each round requires the previous round's result
 
 \subsection{Training and predicting result is very stable}
 The prediction result is very stable, using the same model to predict the same data will always get the same result.
@@ -293,7 +299,7 @@ I didn't the experiment with coloured noises and grey noises, it shows the noise
     \begin{center}
         \includegraphics[width=0.9\textwidth]{11people-noised}
     \end{center}
-    \caption{The noises \cite{noise} have significant impacts \cite{skinface} on the algorithm.}
+    \caption{The noises \cite{noise} have significant bad impacts \cite{skinface} on the algorithm.}
     \label{fig:tiltcor}
 \end{figure*}
 
@@ -321,14 +327,14 @@ For, example, in Figure \ref{fig:ext}
     \end{center}
     \caption{The first two images are adjacent frames picked randomly from \textit{Prison Break S4E04 1:32},
     the first image is the second image's mask to produce the third image.
-    The marks in the third images indicates the features in selected areas are discarded in which layer of the cascading structure.}
+    The marks in the third images indicates which layer are the features discarded in selected areas in the cascading structure.}
     \label{fig:ext}
 \end{figure}
 
 Initially, current frame should be marked like the third picture in Figure \ref{fig:ext} by Viola and Jones' method,
 and the main idea is to find the ``different areas'' between the two frames but with higher layer numbers.
 I call it high probable areas.
-Then re-calculate those areas with high difference only, to detect the potential faces.
+Then re-calculate those areas with ``high difference'' only, to detect the potential faces.
 The ``high difference'' threshold might also be learnt from AdaBoost.
 
 Voila and Jones's works showed that AdaBoost was quite powerful than I expected.
@@ -347,6 +353,25 @@ In \textit{Proc. IEEE Conf. Comput. Vis. Pattern Recog.}, 2001, pp. 511–518.
 \bibitem {adaboost}
 Y. Freund and R.E. Schapire, ``A decision-theoretic generalization of online learning and an application to boosting,''
 In \textit{Computational Learning Theory: Eurocolt '95}, pages 23-27, Springer-Verlag, 1995.
+
+\bibitem {joint}
+Y. Amit, D. Geman, and K. Wilder, ``Joint induction of shape features and tree classfiers,'' 1977.
+
+\bibitem {snowbased}
+D. Roth, M. Yang, and N. Ahuja, ``A snowbased face detector,''
+In \textit{Neural Information Processing 12}, 2000.
+
+\bibitem {nnbased}
+H. Rowley, S. Baluja, and T. Kanade, ``Neural network-based face detection,''
+In \textit{IEEE Patt. Anal. Mach. Intell.}, volume 20, pages 22-38, 1998.
+
+\bibitem {stat3d}
+H. Schneiderman and T.Kanade, ``A statistical method for 3D object detection applied to faces and cars,''
+In \textit{Inernational Conference on Computer Vission}, 2000.
+
+\bibitem {examplebased}
+K. Sung and T. Poggio, ``Example-based learning for view-based face detection,''
+In \textit{IEEE Patt. Anal. Mach. Intell.}, volume 20, pages 39-51, 1998.
 
 \bibitem {imgret}
 K. Tieu and P. Viola, ``Boosting image retrieval,''
