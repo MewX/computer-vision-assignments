@@ -4,6 +4,8 @@
 \usepackage[utf8]{inputenc}
 \usepackage{gensymb}
 \usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
 \usepackage{mathtools}
 \graphicspath{ {report2-imgs/} }
 \usepackage{float}
@@ -239,21 +241,26 @@ OpenCV provides two pre-trained models with difference windows sizes: 20x20 and 
 So, I tested them in very small images and proved in Figure \ref{fig:ysmall} and \ref{fig:yori}.
 I also tested even smaller images, but none of the two models can detect any face in that images database.
 
-\begin{figure}[t]
-    \begin{center}
-        \includegraphics[width=0.9\linewidth]{yaleallsmall}
-    \end{center}
-    \caption{The images from Yale database are compressed into 40x30 size, and this is the results from 20x20 window size model. Two faces can be detected.}
-    \label{fig:ysmall}
-\end{figure}
 
-\begin{figure}[t]
-    \begin{center}
-        \includegraphics[width=0.9\linewidth]{yaleallsmall_ori}
-    \end{center}
-    \caption{The images from Yale database are compressed into 40x30 size, and this is the results from 24x24 window size model. None of the faces can be detected.}
-    \label{fig:yori}
-\end{figure}
+\begin{figure*}[t]
+    \centering
+    \begin{subfigure}[t]{0.45\textwidth}
+        \begin{center}
+            \includegraphics[width=0.9\textwidth]{yaleallsmall}
+        \end{center}
+        \caption{Results from 20x20 window size model. Two faces can be detected.}
+        \label{fig:ysmall}
+    \end{subfigure}
+	~
+    \begin{subfigure}[t]{0.45\textwidth}
+        \begin{center}
+            \includegraphics[width=0.9\textwidth]{yaleallsmall_ori}
+        \end{center}
+        \caption{Results from 24x24 window size model. None of the faces can be detected.}
+        \label{fig:yori}
+    \end{subfigure}
+    \caption{The images from Yale database are compressed into 40x30 size, then applying them with two pre-trained models.}
+\end{figure*}
 
 Moreover, the smaller windows size are even more sensitive to the shade objects in face.
 I tested the hair above one eye as the shades in Figure \ref{fig:hair}, the smaller windows size didn't detect the face.
@@ -297,21 +304,25 @@ the resulting model should be able to detect that object from the input testing 
 A more specific example, by Voila and Jones, they trained the model with more than 10,000 marked images of frontal faces.
 That means, if the face in images is not frontal or the face is tilted, the model cannot detect it. (See Figure \ref{fig:tilt} and Figure \ref{fig:tiltcor}.)
 
-\begin{figure}[t]
-    \begin{center}
-        \includegraphics[width=0.9\linewidth]{facial1}
-    \end{center}
-    \caption{The image containing tilted faces examined with modelled trained without tilted faces. This image is from random search \cite{facialimg}.}
-    \label{fig:tilt}
-\end{figure}
-
-\begin{figure}[t]
-    \begin{center}
-        \includegraphics[width=0.9\linewidth]{facial1_corrected}
-    \end{center}
-    \caption{The corrected predicting result, this proves that the facial expression is not the reason of not being detected.}
-    \label{fig:tiltcor}
-\end{figure}
+\begin{figure*}[t]
+    \centering
+    \begin{subfigure}[t]{0.45\textwidth}
+        \begin{center}
+            \includegraphics[width=0.9\linewidth]{facial1}
+        \end{center}
+        \caption{Some faces are not detected.}
+        \label{fig:tilt}
+    \end{subfigure}
+	~
+    \begin{subfigure}[t]{0.45\textwidth}
+        \begin{center}
+            \includegraphics[width=0.9\linewidth]{facial1_corrected}
+        \end{center}
+        \caption{The corrected predicting result, this proves that the facial expression is not the reason of not being detected.}
+        \label{fig:tiltcor}
+    \end{subfigure}
+    \caption{The image containing tilted faces examined with modelled trained without tilted faces. These images are from random search \cite{facialimg}.}
+\end{figure*}
 
 To come over this, the training image data set should contain lots of tilted faces to some extend.
 
