@@ -279,12 +279,16 @@ The first features selected shown in the Figure 4 in original paper are around e
 However, they are still automatically selected by AdaBoost, and it depends on the input data. The potential patterns like this are learnt by computer itself.
 If the input images contains lots of faces of back skin, the first feature might not because eyes are darker than the bridge of the nose.
 
-\subsection{The algorithm is multi-threading friendly}
+\subsection{The algorithm can be multi-threading friendly}
 In modern machine learning and computer vision area, multi-threading becomes more and more important due to the limitation of single CPU core.
-In this algorithm, the features can be calculated simultaneously in different threads, because they are independent with each other.
+Although in this algorithm, the features can be calculated simultaneously in different threads, as they are independent with each other.
 When scanning the whole image, it can be divided into multiple block for multi-threading as well.
 
-AdaBoost is not multi-threading friendly natively, because each round requires the previous round's result
+However, AdaBoost mentioned in this paper is not multi-threading friendly natively, because each round requires the previous round's result.
+And most times are spent on AdaBoost training, which means in most time, the algorithm cannot be calculated in parallel.
+
+In later research, the AdaBoost can be ported into multi-threading and multi-core \cite{mt} now.
+That means originally, the algorithm is not multi-threading friendly, but now it is with some modifications mainly on the AdaBoost parts.
 
 \subsection{Training and predicting result is very stable}
 The prediction result is very stable, using the same model to predict the same data will always get the same result.
@@ -420,6 +424,10 @@ In \textit{Proceedings of the IEEE Conference on Computer Vision and Pattern Rec
 \bibitem {imgdb}
 J. S. DeBonet and P. Viola, ``Structure driven image database retrieval,''
 In \textit{Adv. Neur. Info. Proc. Sys.}, volume 10, 1998.
+
+\bibitem {mt}
+Y. K. Chen, Wenlong Li and Xiaofeng Tong, ``Parallelization of AdaBoost algorithm on multi-core processors,''
+In \textit{IEEE Workshop on Signal Processing Systems}, 2008, pp. 275-280.
 
 \bibitem {opencvmodels}
 opencv/data/haarcascades at master - opencv/opencv,
