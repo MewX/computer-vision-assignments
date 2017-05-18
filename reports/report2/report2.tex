@@ -84,7 +84,16 @@ Therefore, the exhaustive search set is super large even for a normal images. (F
 As is mentioned in Section \ref{sec:cf}, the exhaustive set is super large, and it's impossible to detect every single rectangular feature.
 The idea is to select only key features in an image, the key features in each stage (or say layer) can discard most useless features.
 Then, put the selected features into the next layer, so that most computations will be put on distinguishing useful features.
-This can significantly produce the correct prediction result, and therefore, the time cost will get reduced.
+This can significantly produce the correct prediction result, and therefore, the time cost will get reduced apparently.
+The cascade structure is shown in Figure \ref{fig:cs}.
+
+\begin{figure}[t]
+    \begin{center}
+        \includegraphics[width=0.9\linewidth]{cascading}
+    \end{center}
+    \caption{The cascading structure of the whole algorithm process. Data are picked from the original paper Section 5.}
+    \label{fig:hsf}
+\end{figure}
 
 \subsubsection{Selecting important features}
 In selecting important features part, the authors used their previous work \cite{imgret}.
