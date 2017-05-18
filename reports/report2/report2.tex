@@ -186,11 +186,6 @@ And only one face is not detected, the reason might be the combined disturbance 
     \label{fig:overall}
 \end{figure}
 
-% TODO:
-% https://blog.bluecrossmn.com/future-face-minnesota-look-willmar/ - the picture source
-
-% TODO: the total round of AdaBoost
-
 
 \subsection{Single feature performs bad}
 In the partial demonstration in Section 3 of the original paper, the author showed that with 200 feature's classifier can achieve 95\% percent accurate.
@@ -203,7 +198,7 @@ As a result, training AdaBoost to fit only one feature has a large probability t
 
 \subsection{Overfit causes problems}
 AdaBoost can always overfit if the fit process keeps going on.
-I believe select a proper total training round is more important.
+I believe selecting a proper maxima training round is very important, but the authors didn't mention the training details in the paper.
 
 The authors show an ROC curve (Figure 7 in original paper), which indicates that the more false positives are actually with higher correct detection rate.
 This looks disobeying my hypothesis, but I think the $X$-axis showed only 200 false positives among 75 million sub-windows.
@@ -263,6 +258,7 @@ and each model are different with each other even with the same configuration.
 
 \subsection{Model performance highly depends on training data}
 In the motivation of this paper, any kind of face can be detected if the training data are provided.
+The normal concerns are facial expressions, face decorations and etc., for training based algorithms, it require more variant input images to come over this.
 Therefore, for the training data, if we giving 10,000 images marked as an object, and many images marked as not an object,
 the resulting model should be able to detect that object from the input testing data.
 
@@ -297,7 +293,7 @@ I didn't the experiment with coloured noises and grey noises, it shows the noise
     \begin{center}
         \includegraphics[width=0.9\textwidth]{11people-noised}
     \end{center}
-    \caption{The noises \cite{noise} have significant impacts on the algorithm.}
+    \caption{The noises \cite{noise} have significant impacts \cite{skinface} on the algorithm.}
     \label{fig:tiltcor}
 \end{figure*}
 
@@ -307,14 +303,36 @@ As a result, the Haar-like features are still sensitive to image noises.
 
 
 \section{Extensions}
-The performance of this algorithm is very satisfying, in the computation ability in 2001, it can pro
-% TODO: the adjacent frames difference used in video face detection
-% only recalculate the different parts
+In 2001, this algorithm can outperform other approaches 15 more times, and with the computational ability,
+it must be able to perform better using a smaller window size and smaller slicing/scaling step sizes.
+And this will achieve a more accurate detecting rate.
 
-%
+As is mentioned in the introduction section in the original paper, some video face detection methods can outperform their algorithm.
+Because in video, the images are continuous, so the difference between adjacent frames can be used directly for reducing computing time.
+
+However, the authors didn't refer to any kind of video face detection papers.
+I thought a very simple but efficient algorithm to calculate the difference between the two images - using mask,
+calculating the absolute difference between the adjacent two frames (see Figure \ref{fig:ext}).
+
+For, example, in Figure \ref{fig:ext}
+\begin{figure}[t]
+    \begin{center}
+        \includegraphics[width=0.9\linewidth]{extension}
+    \end{center}
+    \caption{The first two images are adjacent frames picked randomly from \textit{Prison Break S4E04 1:32},
+    the first image is the second image's mask to produce the third image.
+    The marks in the third images indicates the features in selected areas are discarded in which layer of the cascading structure.}
+    \label{fig:ext}
+\end{figure}
+
+Initially, current frame should be marked like the third picture in Figure \ref{fig:ext},
+and the main idea is to find the different areas between the two frames but with higher layer numbers.
+I call it high probable areas. Then re-calculate those areas only, to detect the potential faces.
 
 
 \section{Conclusion}
+% TODO
+
 
 % Bibliography
 \begin{thebibliography}{99}
@@ -353,6 +371,10 @@ Yale Face Database,
 \bibitem {facialimg}
 These Amazing Photo Collages Display The Wide Range Of Human Emotions! Awesome Work!,
 \url{http://www.viralspell.com/amazing-photo-collages-display-wide-range-human-emotions-awesome-work/}
+
+\bibitem {skinface}
+Blue Cross' Community Table aims to improve health for Willmar's increasingly older and more diverse community,
+\url{https://blog.bluecrossmn.com/future-face-minnesota-look-willmar/}
 
 \bibitem {noise}
 Add noise online,
