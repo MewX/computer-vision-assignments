@@ -302,8 +302,8 @@ And noised images cannot provide very apparent contrasts for the model.
 As a result, the Haar-like features are still sensitive to image noises.
 
 
-\section{Extensions}
-In 2001, this algorithm can outperform other approaches 15 more times, and with the computational ability,
+\section{Conclusion and extensions}
+In 2001, this algorithm can outperform other approaches 15 more times, and with nowadays computational ability,
 it must be able to perform better using a smaller window size and smaller slicing/scaling step sizes.
 And this will achieve a more accurate detecting rate.
 
@@ -311,8 +311,8 @@ As is mentioned in the introduction section in the original paper, some video fa
 Because in video, the images are continuous, so the difference between adjacent frames can be used directly for reducing computing time.
 
 However, the authors didn't refer to any kind of video face detection papers.
-I thought a very simple but efficient algorithm to calculate the difference between the two images - using mask,
-calculating the absolute difference between the adjacent two frames (see Figure \ref{fig:ext}).
+I thought a very simple but efficient algorithm to calculate the difference between the two images - using mask to
+calculate the absolute difference between the adjacent two frames (see Figure \ref{fig:ext}).
 
 For, example, in Figure \ref{fig:ext}
 \begin{figure}[t]
@@ -325,13 +325,17 @@ For, example, in Figure \ref{fig:ext}
     \label{fig:ext}
 \end{figure}
 
-Initially, current frame should be marked like the third picture in Figure \ref{fig:ext},
-and the main idea is to find the different areas between the two frames but with higher layer numbers.
-I call it high probable areas. Then re-calculate those areas only, to detect the potential faces.
+Initially, current frame should be marked like the third picture in Figure \ref{fig:ext} by Viola and Jones' method,
+and the main idea is to find the ``different areas'' between the two frames but with higher layer numbers.
+I call it high probable areas.
+Then re-calculate those areas with high difference only, to detect the potential faces.
+The ``high difference'' threshold might also be learnt from AdaBoost.
 
-
-\section{Conclusion}
-% TODO
+Voila and Jones's works showed that AdaBoost was quite powerful than I expected.
+And by machine learning methods, the potential patterns can be automatically and easily found,
+the only challenge is to reduce the computational cost.
+Moreover, the face detection algorithm is the basis of face recognition area,
+and lots of object detection works are based on Viola and Jones's work which is quite impressive.
 
 
 % Bibliography
