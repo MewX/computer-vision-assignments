@@ -15,3 +15,4 @@ JSON format:
 '''
 
 
+regex = "^(.*?\.jpg)#(\d+)\t(.*?)$"

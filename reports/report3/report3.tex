@@ -88,6 +88,7 @@ learn the pattern between images and sentences automatically.
 Therefore there is no limitation for this method literally,
 because the training data can be arbitrary, and the model thus will be adjusted by the training data.
 
+\subsection{Training}
 The overview of training algorithm steps is as follows,
 \begin{enumerate}
     \item Prepare the training images and corresponding sentences;
@@ -95,25 +96,27 @@ The overview of training algorithm steps is as follows,
           and sometimes each image has multiple descriptive sentences.)}
     \item Extract features using pre-trained CNN model on ImageNet \cite{imagenet};
           \textit{(this model contains objects of 200 classes, which is described in ImageNet Detection Challenge \cite{inch}.)}
-    \item Calculate the image representation matrix using top 19 detected known object by ImageNet CNN plus the whole image matrix;
+    \item Calculate the image representation matrix (feature matrix) using top 19 detected known object by ImageNet CNN plus the whole image matrix;
           \textit{(the representation matrix in the paper is defined in $h \times 4096$ dimensions, thus this is the recognizable resolution.)}
-    \item Train the sentence generator multimodal RNN is trained to take a word to predict the next following word, by passing the word sequence and the image representation matrix;
+    \item Train the multimodal RNN sentence generator which takes a word to predict the next following word, by passing the words one by one and the image representation matrix;
           \textit{(``START'' and ``END'' are two special tokens in this RNN, and the words are sent to the RNN one by one.)}
 \end{enumerate}
 % TODO: how to tag more effectively (+5 times selected)
 
-To test an image:
+\subsection{Predicting}
+To predict an image:
 \begin{enumerate}
     \item Prepare testing images;
     \item Extract features using pre-trained CNN model on ImageNet;
           \textit{(same as training.)}
-    \item Calculate the image representation matrix using top 19 detected known object by ImageNet CNN plus the whole image matrix;
+    \item Calculate the image representation matrix (feature matrix) using top 19 detected known object by ImageNet CNN plus the whole image matrix;
           \textit{(same as training.)}
     \item Generate description from multimodal RNN by setting ``START'' token and image representation matrix;
           \textit{(until ``END'' is generated, the description is finished generating.)}
 \end{enumerate}
 
-Besides, the original paper also mentions the methods for predicting region text information, to mark the regions like Fig. \ref{fig:region}:
+\subsection{Benchmark}
+The original paper also mentions the methods for predicting region text information (to mark the regions like Figure \ref{fig:region}):
 \begin{enumerate}
     \item When having the image representation matrix;
     \item Calculate the sentence representation vector using Bidirectional Recurrent Neural Network (BRNN) \cite{brnn};
@@ -128,6 +131,8 @@ Besides, the original paper also mentions the methods for predicting region text
           to find the best alignment, the authors use dynamic programming by Viterbi et al. \cite{viterbi}.)}
 \end{enumerate}
 
+The ``image-sentence score'' is the benchmark value, and the experiments from the original paper use this score ranking for comparisons.
+
 \begin{figure*}
     \begin{center}
         \includegraphics[width=0.9\textwidth]{region.png}
@@ -137,16 +142,20 @@ Besides, the original paper also mentions the methods for predicting region text
 \end{figure*}
 
 
-\section{Hypothesis}
+\section{Hypothesis and limitations}
 % 1. two data model problem: one object in one model, not in another model (PS an object)
 % 2. input generation size not enough, use small object with high resolution
+% 3.
 
 
 \section{Experiments}
 % details set up
 
+% log prob, but how is it calculated
 
-\section{Limitations}
+% benchmark on flickr8k's 1k
+
+% benchmark on hypothesis
 
 
 \section{Conclusion}
