@@ -66,7 +66,7 @@ generate richer and high-level descriptions of the image, no matter what the sce
 Methods from Kulkarni \textit{et al.} \cite{kulkarni} limit the resulting sentence number in one;
 whereas this paper's authors think that manual restriction is not necessary and it reduces the artificial intelligence's creativity.
 
-Matuszek \textit{et al.} \cite{matuszek} used grounding dependency tree which put words into a vector space.
+Matuszek \textit{et al.} \cite{matuszek} used grounding dependency tree relations which arrange words in a vector space.
 The vector space would limit the results to some extend, like the sentence length, etc.
 
 
@@ -79,14 +79,62 @@ Now, pre-trained image/word vectors are quite popular.
 For images, ImageNet \cite{imagenet} is a very popular pre-trained image recognition model;
 for words, previous works \cite{bengio}, \cite{socher2}, \cite{mikolov} mentioned the pre-trained word vectors
 to obtain low-dimensional representations of words.
-Additionally, in the proposed paper, the authors use these pre-trained models as well.
+Additionally, in the original paper, the authors use these pre-trained models as well.
 
 
 \section{Algorithm Description}
-Unlike the previous approaches,
+Unlike the previous approaches, the proposed method in Karpathy \textit{et al.}'s paper is to let the artificial neural networks
+learn the pattern between images and sentences automatically.
+Therefore there is no limitation for this method literally,
+because the training data can be arbitrary, and the model thus will be adjusted by the training data.
 
-
+The overview of training algorithm steps is as follows,
+\begin{enumerate}
+    \item Prepare the training images and corresponding sentences;
+          \textit{(datasets mentioned in the paper are flickr8k, flickr30k and MSCOCO,
+          and sometimes each image has multiple descriptive sentences.)}
+    \item Extract features using pre-trained CNN model on ImageNet \cite{imagenet};
+          \textit{(this model contains objects of 200 classes, which is described in ImageNet Detection Challenge \cite{inch}.)}
+    \item Calculate the image representation matrix using top 19 detected known object by ImageNet CNN plus the whole image matrix;
+          \textit{(the representation matrix in the paper is defined in $h \times 4096$ dimensions, thus this is the recognizable resolution.)}
+    \item Train the sentence generator multimodal RNN is trained to take a word to predict the next following word, by passing the word sequence and the image representation matrix;
+          \textit{(``START'' and ``END'' are two special tokens in this RNN, and the words are sent to the RNN one by one.)}
+\end{enumerate}
 % TODO: how to tag more effectively (+5 times selected)
+
+To test an image:
+\begin{enumerate}
+    \item Prepare testing images;
+    \item Extract features using pre-trained CNN model on ImageNet;
+          \textit{(same as training.)}
+    \item Calculate the image representation matrix using top 19 detected known object by ImageNet CNN plus the whole image matrix;
+          \textit{(same as training.)}
+    \item Generate description from multimodal RNN by setting ``START'' token and image representation matrix;
+          \textit{(until ``END'' is generated, the description is finished generating.)}
+\end{enumerate}
+
+Besides, the original paper also mentions the methods for predicting region text information, to mark the regions like Fig. \ref{fig:region}:
+\begin{enumerate}
+    \item When having the image representation matrix;
+    \item Calculate the sentence representation vector using Bidirectional Recurrent Neural Network (BRNN) \cite{brnn};
+          \textit{(each input sentence sequence is transformed into a $h$ dimensional vector;
+          during the calculation, BRNN takes two directional word relations to maintain a context;
+          then, a word vocabulary is built automatically by the methods from Mikolov et al. \cite{mikolov}.)}
+    \item Calculate image-sentence score by dot product between sentence representation vector and image representation matrix and a $max$ operation;
+          \textit{(this method is proved by their previous work \cite{karpathy},
+          and the resulting image-sentence score is actually calculated by the image region-word score.)}
+    \item Align words with corresponding regions in Markov Random Field (MRF) to get an annotated region set;
+          \textit{(each region has multiple words aligned with;
+          to find the best alignment, the authors use dynamic programming by Viterbi et al. \cite{viterbi}.)}
+\end{enumerate}
+
+\begin{figure*}
+    \begin{center}
+        \includegraphics[width=0.9\textwidth]{region.png}
+    \end{center}
+    \caption{The region prediction from the original paper. This figure is the Fig. 9 in original paper.}
+    \label{fig:region}
+\end{figure*}
 
 
 \section{Hypothesis}
@@ -157,6 +205,22 @@ In \textit{Proc. Advances Neural Inf. Process. Syst.}, pp. 3111–3119, 2013.
 \bibitem {imagenet}
 J. Deng, W. Dong, R. Socher, L.-J. Li, K. Li, and L. Fei-Fei, ImageNet: A large-scale hierarchical image database,
 In \textit{Proc. IEEE Conf. Comput. Vis. Pattern Recog.}, pp. 248–255, 2009.
+
+\bibitem {inch}
+O. Russakovsky, et al., Imagenet large scale visual recognition challenge,
+In \textit{Int. J. Comput. Vis.}, vol. 115, no. 3, pp. 211–252, 2015.
+
+\bibitem {brnn}
+M. Schuster and K. K. Paliwal, Bidirectional recurrent neural networks,
+In \textit{IEEE Trans. Signal Process.}, vol. 45, no. 11, pp. 2673–2681, 1997.
+
+\bibitem {karpathy}
+A. Karpathy, A. Joulin, and F. F. F. Li, Deep fragment embeddings for bidirectional image sentence mapping,
+In \textit{Proc. Advances Neural Inf. Process. Syst.}, pp. 1889–1897, 2014.
+
+\bibitem {viterbi}
+A. J. Viterbi, Error bounds for convolutional codes and an asymptotically optimum decoding algorithm,
+in \textit{IEEE Trans. Inf. Theory}, vol. TIT-13, no. 2, pp. 260–269, 1967.
 
 \end{thebibliography}
 
