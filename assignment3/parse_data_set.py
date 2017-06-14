@@ -4,7 +4,14 @@ import json
 '''
 JSON format:
 {
-    images: [],
-
+    images: [
+        {
+            split: "train", # train/dev/test
+            sentences: ["", "", ...]
+        }
+    ],
+    ...
 }
 '''
+
+
