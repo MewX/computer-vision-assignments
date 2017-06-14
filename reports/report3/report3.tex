@@ -44,10 +44,49 @@ but also the information transformation.
 
 
 \section{Background}
-Before the paper by Karpathy \textit{et al.} \cite{origin}. There are plenty of researches challenging this problem.
+Before this paper by Karpathy \textit{et al.} \cite{origin}. There are plenty of researches challenging this problem,
+which can be mainly divided into three types.
+
+\subsection{Image annotating strategy}
+A typical way to annotate images is classifying or tagging images \cite{everingham}, \cite{russakovsky}.
+In a fixed word dictionary, the image tagging can be more meaningful because unwanted words are discarded at the beginning.
+The weakness is that the words in dictionary are often not rich enough.
+
+Barnard \textit{et al.} \cite{barnard} and Socher \textit{et al.} \cite{socher}'s researches uses the images,
+whose segments are annotated instead the whole image, as the training input data.
+That helps the object recognition process, but requires more human works.
+
+Gould \textit{et al.}'s research \cite {gould} used a method to extract scene feature,
+so that the relationships between objects and the scene can be easily connected.
+However, their work was focusing on labelling the scene, while the proposed method is used to
+generate richer and high-level descriptions of the image, no matter what the scene labels are.
+
+
+\subsection{Description generating strategy}
+Methods from Kulkarni \textit{et al.} \cite{kulkarni} limit the resulting sentence number in one;
+whereas this paper's authors think that manual restriction is not necessary and it reduces the artificial intelligence's creativity.
+
+Matuszek \textit{et al.} \cite{matuszek} used grounding dependency tree which put words into a vector space.
+The vector space would limit the results to some extend, like the sentence length, etc.
+
+
+\subsection{Connecting between images and natural language strategy}
+The earlier pioneering methods by Farhadi \textit{et al.} \cite{farhadi} hard-coded visual concepts and explicitly defined sentence.
+Images objects or scenes are pre-defined, then marked images are learnt by the system so that the system can recognize defined things.
+However, these methods limited the language variety and required much human works to define the connecting between language words and the images first.
+
+Now, pre-trained image/word vectors are quite popular.
+For images, ImageNet \cite{imagenet} is a very popular pre-trained image recognition model;
+for words, previous works \cite{bengio}, \cite{socher2}, \cite{mikolov} mentioned the pre-trained word vectors
+to obtain low-dimensional representations of words.
+Additionally, in the proposed paper, the authors use these pre-trained models as well.
 
 
 \section{Algorithm Description}
+Unlike the previous approaches,
+
+
+% TODO: how to tag more effectively (+5 times selected)
 
 
 \section{Hypothesis}
@@ -66,10 +105,58 @@ Before the paper by Karpathy \textit{et al.} \cite{origin}. There are plenty of 
 
 
 % Bibliography
-\begin{thebibliography}{9}
+\begin{thebibliography}{99}
 \bibitem {origin}
 A. Karpathy and L. Fei-Fei, Deep visual-semantic alignments for generating image descriptions,
-In \textit{Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition}, pages 3128-3137, 2015.
+In \textit{Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition}, pp. 3128-3137, 2015.
+
+\bibitem {kulkarni}
+G. Kulkarni, et al., Baby talk: Understanding and generating simple image descriptions,
+In \textit{Proc. IEEE Conf. Comput. Vis. Pattern Recog.}, pp. 1601-1608, 2011.
+
+\bibitem {farhadi}
+A. Farhadi, et al., Every picture tells a story: Generating sentences from images,
+In \textit{Proc. 11th Eur. Conf. Comput. Vis.}, pp. 15-29, 2010.
+
+\bibitem {everingham}
+M. Everingham, L. Van Gool, C. K. I. Williams, J. Winn, and A. Zisserman, The Pascal visual object classes (VOC) challenge,
+In \textit{Int. J. Comput. Vis.}, vol. 88, no. 2, pp. 303–338, 2010.
+
+\bibitem {russakovsky}
+O. Russakovsky, et al., Imagenet large scale visual recognition challenge,
+In \textit{Int. J. Comput. Vis.}, vol. 115, no. 3, pp. 211–252, 2015.
+
+\bibitem {barnard}
+K. Barnard, P. Duygulu, D. Forsyth, N. De Freitas, D. M. Blei, and M. I. Jordan, Matching words and pictures,
+In \textit{J. Mach. Learn. Res.}, vol. 3, pp. 1107–1135, 2003.
+
+\bibitem {socher}
+R. Socher and L. Fei-Fei, Connecting modalities: Semi-supervised segmentation and annotation of images using unaligned text corpora,
+In \textit{Proc. IEEE Conf. Comput. Vis. Pattern Recog.}, pp. 966–973, 2010.
+
+\bibitem {gould}
+S. Gould, R. Fulton, and D. Koller, Decomposing a scene into geometric and semantically consistent regions,
+In \textit{Proc. IEEE 12th Int. Conf. Comput. Vis.}, pp. 1–8, 2009.
+
+\bibitem {matuszek}
+C. Matuszek, N. FitzGerald, L. Zettlemoyer, L. Bo, and D. Fox, A joint model of language and perception for grounded attribute learning,
+In \textit{Proc. 29th Int. Conf. Mach. Learn.}, pp. 1671–1678, 2012.
+
+\bibitem {bengio}
+Y. Bengio, H. Schwenk, J.-S. Senecal, F. Morin, and J.-L. Gauvain, Neural probabilistic language models,
+In \textit{Innovations in Machine Learning. Berlin, Germany}, 2006.
+
+\bibitem {socher2}
+R. Socher, J. Pennington, and C. Manning, Glove: Global vectors for word representation,
+In \textit{Proc. Empirical Methods Natural Language Process.}, pp. 1532–1543, 2014.
+
+\bibitem {mikolov}
+T. Mikolov, I. Sutskever, K. Chen, G. S. Corrado, and J. Dean, Distributed representations of words and phrases and their compositionality,
+In \textit{Proc. Advances Neural Inf. Process. Syst.}, pp. 3111–3119, 2013.
+
+\bibitem {imagenet}
+J. Deng, W. Dong, R. Socher, L.-J. Li, K. Li, and L. Fei-Fei, ImageNet: A large-scale hierarchical image database,
+In \textit{Proc. IEEE Conf. Comput. Vis. Pattern Recog.}, pp. 248–255, 2009.
 
 \end{thebibliography}
 
