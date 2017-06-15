@@ -1,4 +1,3 @@
-
 # this file is used to benchmark a test solution with known input
 '''
 {
@@ -48,6 +47,10 @@
       ...
 }
 '''
+import re
+import json
+
+import sys
 
 A = ['123', '12', '1', '12']
 B = ['12', '1', '12', '123']
@@ -58,24 +61,75 @@ def lcs(S, T):
     n = len(T)
     counter = [[0]*(n+1) for x in range(m+1)]
     longest = 0
-    lcs_set = list()
+    lcs_list = list()
     for i in range(m):
         for j in range(n):
             if S[i] == T[j]:
                 c = counter[i][j] + 1
                 counter[i+1][j+1] = c
                 if c > longest:
-                    lcs_set = list()
+                    lcs_list = list()
                     longest = c
-                    lcs_set.append(S[i-c+1:i+1])
+                    lcs_list.append(S[i-c+1:i+1])
                 elif c == longest:
-                    lcs_set.append(S[i-c+1:i+1])
+                    lcs_list.append(S[i-c+1:i+1])
 
-    return lcs_set
+    return len(lcs_list)
 
-print(repr(lcs(A, B)))
 
-regex = "^(.*?\.jpg)#(\d+)\t(.*?)$"
+def benchmark(a, b):
+    set_a = set(a)
+    set_b = set(b)
+    sameWords = set.intersection(set_a, set_b)
+    p_s = len(sameWords) / ((len(set_a) + len(set_b)) / 2)
+
+    # p_lcs = lcs(a, b) / ((len(a) + len(b)) / 2)
+    p_lcs = 1
+    return p_s * p_lcs
+
+
+DATA = int(sys.argv[1])  # 8k or 30k
+tokenFileName = "Flickr8k.token.txt" if DATA == 8 else "results_20130124.token"
+
+with open(tokenFileName) as f:
+    content = f.readlines()
+tokens = [x for x in content]
+
+regex = r"(.+?\.jpg.*?)#(\d+)\t(.+?)$"
+token_map = {}
+for line in tokens:
+    # print("{} - {}\n".format(regex, line))
+    obj = re.match(regex, line)
+    name = obj.group(1)
+    sentence = obj.group(3).lower().replace(".", "").strip()
+    if name in token_map:
+        token_map[name].append(sentence)
+    else:
+        token_map[name] = [sentence]
+
+# test input data
+# for x in token_map.keys():
+#     print(x)
+#     print(token_map[x])
+
+# read the result_struct.json file
+# argv[2]: the result_struct.json file name
+print("Loading {}\n".format(sys.argv[2]))
+with open(sys.argv[2]) as data_file:
+    parsed_json = json.load(data_file)
+img_blobs = parsed_json['imgblobs']
+for img in img_blobs:
+    file_name = img['img_path']
+    sentence = img['candidate']['text']
+
+    # calc result
+    m = 0.0
+    for x in token_map[file_name]:
+        temp = benchmark(sentence, x)
+        m = max(temp, m)
+    print("{}: {}".format(file_name, "%.4f" % m))
+    # print("{}: {}\n".format(file_name, sentence))
+
 
 # parse prediction results
 # build image ~ text table
