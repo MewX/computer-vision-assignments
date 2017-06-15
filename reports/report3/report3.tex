@@ -99,7 +99,6 @@ The overview of training algorithm steps is as follows,
     \item Train the multimodal RNN sentence generator which takes a word to predict the next following word, by passing the words one by one and the image feature matrix;
           \textit{(``START'' and ``END'' are two special tokens in this RNN, and the words are sent to the RNN one by one.)}
 \end{enumerate}
-% TODO: how to tag more effectively (+5 times selected)
 
 \subsection{Predicting}
 To predict an image:
@@ -190,11 +189,33 @@ The experiment is discussed in Section \ref{sec:uo}.
 
 
 \subsection{Language grammar issue}
-My hypothesis is that it learns from non-systematic sentences, thus there must be grammar errors leading to a different meaning.
+% The proposed methods in original paper use word2vec to group the words \cite{mikolov},
+% which helps the model to distinguish coordinate components or other grammatical relationships,
+% e.g. ``A and B'' is equal to ``B and A''.
 
-% TODO: 1001773457_577c3a7d70.jpg#0	A black dog and a spotted dog are fighting
-Due to the training methods in the original paper,
+My hypothesis is that, although it learns from non-systematic sentences,
+there should still seldom be grammar errors because the use of contexts.
 
+% TODO: how to tag more effectively (+5 times selected)
+Due to the RNN training process in the original paper, predicting each next word requires a context,
+which helps forming the grammatically correct sentence.
+An experiment on this hypothesis is mentioned in Section \ref{sec:lg}.
+
+
+\subsection{Resulting number issue}
+My hypothesis is that the proposed methods cannot distinguish the correct number in most times.
+
+Although the training input word sequence has been been grouped by word2vec,
+the words representing numbers are not treated seperately in proposed methods,
+i.e. all sentence components are treated equally in RNN.
+That means the word ``two'' in ``two men'' and ``two women'' are treated seperately,
+When current word is ``two'', the next possible words are ``men'' and ``women''.
+
+However, if the training data contains ``two men'' and ``a woman'' only,
+the resulting sentence is impossible to contain ``two women'' and ``a man'',
+because ``two'' is followed by ``men'', ``a'' is followed by ``woman'',
+and there is no change that ``two'' is followed by neither ``woman'' nor ``women''.
+An experiment on this hypothesis is shown in Section \ref{sec:rn}.
 
 
 \section{Experiments}
@@ -211,9 +232,13 @@ Due to the training methods in the original paper,
 \subsubsection{Unexpected object experiment} \label{sec:uo}
 
 \subsubsection{Language grammar experiment} \label{sec:lg}
+% an exception because of training data
+% 1198194316_543cc7b945.jpg#2	A man and woman standing in front of a refreshment stand
 
+% a man in a black shirt and a woman in a white shirt and a black shirt
 
-
+\subsubsection{Resulting number experiment} \label{sec:rn}
+% randomly +1
 
 
 \section{Conclusion}
