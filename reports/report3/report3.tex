@@ -233,7 +233,7 @@ The experiments are devided into two types:
     \item Fresh test, which is tested on new data;
 \end{enumerate}
 
-The metric test benchmark funcion is defined in this:
+My metric test benchmark funcions are defined as:
 $$B = max(P(CorrectWord) \times P(CorrectOrder))$$
 where $P(CorrectWord)$ is calculted by:
 $$P(CorrectWord) = \frac{num}{average(length)}$$
@@ -339,19 +339,71 @@ max    & min    & average \\ \hline
 
 
 \subsection{Experiments for hypothesis}
-% TODO benchmark on hypothesis
 \subsubsection{High resolution experiment} \label{sec:hs}
+To verify my hypothesis, I firstly tested an image with the Flickr8k model, whose result is shown in Fig. \ref{fig:hsori}.
+Then, I expanded the background of the image without any zooming, and the result can be seen in \ref{fig:hs}.
+
+That proved my hypothesis was correct because the model did not know what was on that image.
+It can also be proved in Section \ref{sec:ui} that ``a man'' is the default result in this case.
+
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=0.9\textwidth]{2584487952_f70e5aa9bf.ori.jpg}
+    \end{center}
+    \caption{A picture with resulting sentence of ``a brown dog is running through the grass''.}
+    \label{fig:hsori}
+\end{figure}
+
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=0.9\textwidth]{2584487952_f70e5aa9bf.jpg}
+    \end{center}
+    \caption{A $5000 \times 5000$ px picture, with a dog in the center, the resulting sentence is ``a man is rock climbing''.}
+    \label{fig:hs}
+\end{figure}
 
 \subsubsection{Unexpected object experiment} \label{sec:uo}
+To test this hypothesis, I put a pure green image into the prediction model.
+And the result is shown in Fig. \ref{fig:pure}.
+This also proved that hypothesis that even there was nothing in the image, the model would still give out a complete sentence.
+
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=0.9\textwidth]{pure.jpg}
+    \end{center}
+    \caption{A $600 \times 450$pure green image with the resulting sentence of ``a man is jumping in the air''.}
+    \label{fig:hs}
+\end{figure}
 
 \subsubsection{Language grammar experiment} \label{sec:lg}
-% an exception because of training data
-% 1198194316_543cc7b945.jpg#2	A man and woman standing in front of a refreshment stand
+To test this hypothesis, I selected 100 images from Flickr8k randomly, and tested them using the Flickr8k model.
+The benchmark results are:
+\begin{enumerate}
+    \item Max: 0.8819
+    \item Min: 0.1125
+    \item Average: 0.4137
+\end{enumerate}
 
-% a man in a black shirt and a woman in a white shirt and a black shirt
+By manual checking the 100 prediction sentences, only one sentence had obvious grammar error.
+That sentance is ``a man and woman walk down a street''.
+The use of ``a man and woman'' looks incorrect.
+However, the interesting part is, this is an coincidence because a training data contains this usage:
+in ``1198194316_543cc7b945.jpg#2'', the training sentence is ``A man and woman standing in front of a refreshment stand''.
+
+Looking out of grammar issue, the meaning can have problems.
+Here is an example, one of the 100 prediction sentences is
+``a man in a black shirt and a woman in a white shirt and a black shirt''.
+``A man in a white shirt and a black shirt'' does not make sense.
+
+Therefore, the grammar error rate is almost 0\%, but the meaning can often confusing.
+
 
 \subsubsection{Resulting number experiment} \label{sec:rn}
-% randomly +1
+Using the same prediction sentence results mentioned above, by manual checking.
+At first, filter the images containing only one object, there are 7 images containing more than one objects,
+but 4 of them have a wrong number of subjects. Two of them used a word ``plenty'' to describe the number, which are counted as correct.
+
+Therefore, the hypothesis is correct that the model from the original paper does not have the ability to count the numbers.
 
 
 \section{Conclusion}
