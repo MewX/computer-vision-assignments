@@ -2,6 +2,7 @@
 
 \usepackage{cvpr}
 \usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
 \usepackage{gensymb}
 \usepackage{graphicx}
 \usepackage{caption}
@@ -10,6 +11,8 @@
 \graphicspath{ {report3-imgs/} }
 \usepackage{float}
 \PassOptionsToPackage{hyphens}{url}\usepackage{hyperref}
+\usepackage{minted}
+\usemintedstyle{vs}
 
 \cvprfinalcopy
 \def\cvprPaperID{a1700831}
@@ -219,11 +222,121 @@ An experiment on this hypothesis is shown in Section \ref{sec:rn}.
 
 
 \section{Experiments}
-% TODO: details set up
+The experiments are based on the authors' codes \footnote{\url{https://github.com/karpathy/neuraltalk}} and pre-trained model
+\footnote{\url{http://cs.stanford.edu/people/karpathy/neuraltalk/}} on Flickr8k dataset.
+The image recoginision pre-trained model is a ``caffe'' ported model \footnote{\url{http://www.robots.ox.ac.uk/~vgg/research/very_deep/}}, based on ImageNet.
+The RNN structure is as same as described in the original paper.
 
-% TODO: log prob, but how is it calculated
+The experiments are devided into two types:
+\begin{enumerate}
+    \item Recall test, which is tested on training data;
+    \item Fresh test, which is tested on new data;
+\end{enumerate}
 
-% TODO; benchmark on flickr8k's 1k
+The metric test benchmark funcion is defined in this:
+$$B = max(P(CorrectWord) \times P(CorrectOrder))$$
+where $P(CorrectWord)$ is calculted by:
+$$P(CorrectWord) = \frac{num}{average(length)}$$
+and $P(CorrectOrder)$ is calculated by:
+$$P(CorrectOrder) = \frac{LCSLength}{average(length)}$$
+where LCS means the longest common subsequence, which is a very classical dynamic programming problem.
+Here is an example:
+\begin{itemize}
+    \item Input a: ['a', 'brown', 'dog', 'is', 'running', 'through', 'the', 'grass']
+    \item Input b: ['a', 'brown', 'dog', 'is', 'running', 'outside']
+    \item LCS: ['a', 'brown', 'dog', 'is', 'running']
+\end{itemize}
+
+\subsection{Recall test}
+For the recall test, I randomly selected 1,000 images from Flickr8k dataset using
+``shuf -zen1000 f8k\_data/\text{*} | xargs -0 mv -t neuraltalk/rf1kfrom8k/'' commands.
+
+Then, extract features and do the testing. The testing results are shown in Table \ref{tab:recall}.
+And detailed results are in web submision ``benchmark'' folder.
+
+The best predictiong details are:
+\begin{itemize}
+    \item Training: ['a', 'dog', 'runs', 'through', 'the', 'grass']
+    \item Predicting: ['a', 'dog', 'runs', 'through', 'the', 'grass']
+    \item Interset: ['a', 'dog', 'runs', 'through', 'the', 'grass']
+\end{itemize}
+
+The worst prediction details are:
+\begin{itemize}
+    \item Training: ['two', 'dogs', 'are', 'playing', 'together']
+    \item Predicting: ['a', 'black', 'dog', 'bites', 'a', 'white', 'dog', 'on', 'the', 'grass']
+    \item Interset: []
+\end{itemize}
+
+\begin{table}[]
+\centering
+\begin{tabular}{ccc}
+\hline
+max    & min    & average \\ \hline
+1.0000 & 0.0000 & 0.4238  \\ \hline
+\end{tabular}
+\caption{Recall testing results.}
+\label{tab:recall}
+\end{table}
+
+\subsection{Fresh test}
+For the first fresh test, I randomly selected 1,000 images from Flickr30k dataset,
+and use the model trained from Flickr8k dataset.
+
+Then, extract features and do the testing using the same model. The final results are shown in Table \ref{tab:fresh1}.
+
+The best predictiong details are:
+\begin{itemize}
+    \item Training: ['a', 'brown', 'dog', 'is', 'running', 'through', 'the', 'snow']
+    \item Predicting: ['the', 'brown', 'dog', 'is', 'running', 'through', 'the', 'snow']
+    \item Interset: ['brown', 'dog', 'is', 'running', 'through', 'the', 'snow']
+\end{itemize}
+
+The worst prediction details are:
+\begin{itemize}
+    \item Training: ['a', 'man', 'in', 'a', 'red', 'jacket', 'is', 'standing', 'in', 'front', 'of', 'a', 'building']
+    \item Predicting: ['people', 'are', 'boarding', 'an', 'almost-full', 'public', 'bus', 'in', 'brazil']
+    \item Interset: ['in']
+
+\end{itemize}
+\begin{table}[]
+\centering
+\begin{tabular}{ccc}
+\hline
+max    & min    & average \\ \hline
+0.9042 & 0.0981 & 0.3745  \\ \hline
+\end{tabular}
+\caption{Fresh testing results on 30k dataset, by 8k model.}
+\label{tab:fresh1}
+\end{table}
+
+Another fresh test is using a model trained by MSCOCO to test 1,000 images from Flickr8k.
+The final results are in Table \ref{tab:fresh2}.
+
+The best predictiong details are:
+\begin{itemize}
+    \item Training: ['a', 'young', 'boy', 'is', 'sitting', 'on', 'a', 'toilet']
+    \item Predicting: ['a', 'young', 'boy', 'sitting', 'on', 'a', 'blue', 'toilet']
+    \item Interset: ['a', 'young', 'boy', 'sitting', 'on', 'a', 'toilet']
+\end{itemize}
+
+The worst prediction details are:
+\begin{itemize}
+    \item Training: ['a', 'group', 'of', 'people', 'standing', 'around', 'a', 'table', 'with', 'a', 'cake']
+    \item Predicting: ['several', 'women', 'wearing', 'pink', 'energizer', bunny', 'ears', 'point', 'to', 'the', 'right']
+    \item Interset: []
+
+\begin{table}[]
+\centering
+\begin{tabular}{ccc}
+\hline
+max    & min    & average \\ \hline
+0.8661 & 0.0000 & 0.3616  \\ \hline
+\end{tabular}
+\caption{Fresh testing results on 8k dataset, by MSCOCO model.}
+\label{tab:fresh2}
+\end{table}
+
 
 \subsection{Experiments for hypothesis}
 % TODO benchmark on hypothesis
