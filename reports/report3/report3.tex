@@ -94,11 +94,9 @@ The overview of training algorithm steps is as follows,
     \item Prepare the training images and corresponding sentences;
           \textit{(datasets mentioned in the paper are flickr8k, flickr30k and MSCOCO,
           and sometimes each image has multiple descriptive sentences.)}
-    \item Extract features using pre-trained CNN model on ImageNet \cite{imagenet};
+    \item Extract 4096 dimensional features vector using pre-trained CNN model on ImageNet \cite{imagenet};
           \textit{(this model contains objects of 200 classes, which is described in ImageNet Detection Challenge \cite{inch}.)}
-    \item Calculate the image representation matrix (feature matrix) using top 19 detected known object by ImageNet CNN plus the whole image matrix;
-          \textit{(the representation matrix in the paper is defined in $h \times 4096$ dimensions, thus this is the recognizable resolution.)}
-    \item Train the multimodal RNN sentence generator which takes a word to predict the next following word, by passing the words one by one and the image representation matrix;
+    \item Train the multimodal RNN sentence generator which takes a word to predict the next following word, by passing the words one by one and the image feature matrix;
           \textit{(``START'' and ``END'' are two special tokens in this RNN, and the words are sent to the RNN one by one.)}
 \end{enumerate}
 % TODO: how to tag more effectively (+5 times selected)
@@ -107,9 +105,7 @@ The overview of training algorithm steps is as follows,
 To predict an image:
 \begin{enumerate}
     \item Prepare testing images;
-    \item Extract features using pre-trained CNN model on ImageNet;
-          \textit{(same as training.)}
-    \item Calculate the image representation matrix (feature matrix) using top 19 detected known object by ImageNet CNN plus the whole image matrix;
+    \item Extract 4096 dimensional features vector using pre-trained CNN model on ImageNet;
           \textit{(same as training.)}
     \item Generate description from multimodal RNN by setting ``START'' token and image representation matrix;
           \textit{(until ``END'' is generated, the description is finished generating.)}
@@ -118,14 +114,17 @@ To predict an image:
 \subsection{Benchmark}
 The original paper also mentions the methods for predicting region text information (to mark the regions like Figure \ref{fig:region}):
 \begin{enumerate}
-    \item When having the image representation matrix;
+    \item When having the image feature vector;
+    \item Calculate the image representation matrix using top 19 detected known objects by the dot product between feature vector and a parameter matrix $W_{m}$;
+          \textit{(the representation matrix in the paper is in the shape of 20 $h$-dimensional vectors, thus this is the recognizable resolution.)}
     \item Calculate the sentence representation vector using Bidirectional Recurrent Neural Network (BRNN) \cite{brnn};
           \textit{(each input sentence sequence is transformed into a $h$ dimensional vector;
           during the calculation, BRNN takes two directional word relations to maintain a context;
           then, a word vocabulary is built automatically by the methods from Mikolov et al. \cite{mikolov}.)}
     \item Calculate image-sentence score by dot product between sentence representation vector and image representation matrix and a $max$ operation;
           \textit{(this method is proved by their previous work \cite{karpathy},
-          and the resulting image-sentence score is actually calculated by the image region-word score.)}
+          and the resulting image-sentence score is actually calculated by the image region-word score,
+          with the dimension of 20.)}
     \item Align words with corresponding regions in Markov Random Field (MRF) to get an annotated region set;
           \textit{(each region has multiple words aligned with;
           to find the best alignment, the authors use dynamic programming by Viterbi et al. \cite{viterbi}.)}
@@ -143,30 +142,59 @@ The ``image-sentence score'' is the benchmark value, and the experiments from th
 
 
 \section{Hypothesis and limitations}
-\subsection{Two model problem}
+\subsection{Two model issue}
 The proposed methods in original paper use two models for the final prediction:
-the object detection model and description generator model.
+the object recognision model and description generator model.
+Two models are trained with different datasets.
 
-Therefore, two models are trained with different datasets.
-My hypothesis is the objects which are in the first training dataset but not in the second dataset
-will take an unnecessary weight in the first model;
-the objects which are not in the first training dataset but in the sencond dataset
-will not be detected.
+Thus, my hypothesis is,
+\begin{enumerate}
+    \item the objects which are in the first training dataset but not in the second dataset
+          will take an unnecessary weight in the first model;
+    \item the objects which are not in the first training dataset but in the sencond dataset
+          will not be detected.
+\end{enumerate}
 
-% TODO: prove it
+In the original paper, the first model is pre-trained for object recognision by ImageNet \cite{imagenet}.
+This is a tree-based model (database) containing 5247 categories of objects, and builded by around 50 million images.
+And the original paper uses 200 categories from The ImageNet Detection Challenge \cite{inch}.
+Given the input image, the nearest neighbor methods can vote and return the recognized object.
+However, the tree nodes are taken by unused objects, thus the the rate of mis-recognision increases, which supports my first statement.
+
+For the second statement, the image representation matrix is calculated as
+$$v = W_{m} \left [ CNN_{\theta_{c}}(I_{b}) \right ] + b_{m}$$
+the resulting matrix from $CNN$ will have un-detected cells filling with $0$.
+And therefore, after the dot product with sentence representation vector
+$$S_{kl} = \sum_{t \in texts} max_{i \in cells}(v_{i}^{T}s_{t})$$
+where $v_{i}^{T}$ is the image representation matrix and $s_{t}$ is the representation matrix.
+The un-detected words will thus result in $0$.
+Hence, those objects not in the recognision model (first dataset) cannot be detected even if they are in the secodn dataset.
 
 
-\subsection{Solution issue}
+\subsection{Resolution issue}
 The image feature size is fixed to 4096 dimensions in the original paper.
-The hypothesis is that, if the image is too larger than its inside objects, the objects cannot even be recognized.
+My hypothesis is that, if the image is too larger than its inside objects, the objects cannot even be recognized.
 
-% TODO: prove it
+In the original paper, the feature set of an image is expressed in a 4096 dimension vector.
+If the image is super large, and the objects cannot be effectively detected and stored in the feature vector,
+the image will be difficult to be summarized correctly. An experiment is mentioned in Section \ref{sec:hs}.
 
 
+\subsection{Unexpected object issue}
+My hypothesis is that unexpected objects will result in unexpected sentences.
 
-% 1. two data model problem: one object in one model, not in another model (PS an object)
-% 2. input generation size not enough, use small object with high resolution
-% 3.
+This is a common machine learning issue, but with different apprearance on results.
+I guess the results will still be a complete sentence even when there is nothing in the input image,
+because the structure of RNN is building sentence from the beginning to the end.
+The experiment is discussed in Section \ref{sec:uo}.
+
+
+\subsection{Language grammar issue}
+My hypothesis is that it learns from non-systematic sentences, thus there must be grammar errors leading to a different meaning.
+
+% TODO: 1001773457_577c3a7d70.jpg#0	A black dog and a spotted dog are fighting
+Due to the training methods in the original paper,
+
 
 
 \section{Experiments}
@@ -176,7 +204,16 @@ The hypothesis is that, if the image is too larger than its inside objects, the 
 
 % TODO; benchmark on flickr8k's 1k
 
+\subsection{Experiments for hypothesis}
 % TODO benchmark on hypothesis
+\subsubsection{High resolution experiment} \label{sec:hs}
+
+\subsubsection{Unexpected object experiment} \label{sec:uo}
+
+\subsubsection{Language grammar experiment} \label{sec:lg}
+
+
+
 
 
 \section{Conclusion}
