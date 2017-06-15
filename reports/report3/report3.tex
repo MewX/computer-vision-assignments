@@ -146,22 +146,22 @@ The ``image-sentence score'' is the benchmark value, and the experiments from th
 \section{Hypothesis and limitations}
 \subsection{Two model issue}
 The proposed methods in original paper use two models for the final prediction:
-the object recognision model and description generator model.
+the object recognition model and description generator model.
 Two models are trained with different datasets.
 
 Thus, my hypothesis is,
 \begin{enumerate}
     \item the objects which are in the first training dataset but not in the second dataset
           will take an unnecessary weight in the first model;
-    \item the objects which are not in the first training dataset but in the sencond dataset
+    \item the objects which are not in the first training dataset but in the second dataset
           will not be detected.
 \end{enumerate}
 
-In the original paper, the first model is pre-trained for object recognision by ImageNet \cite{imagenet}.
-This is a tree-based model (database) containing 5247 categories of objects, and builded by around 50 million images.
+In the original paper, the first model is pre-trained for object recognition by ImageNet \cite{imagenet}.
+This is a tree-based model (database) containing 5247 categories of objects, and built by around 50 million images.
 And the original paper uses 200 categories from The ImageNet Detection Challenge \cite{inch}.
-Given the input image, the nearest neighbor methods can vote and return the recognized object.
-However, the tree nodes are taken by unused objects, thus the the rate of mis-recognision increases, which supports my first statement.
+Given the input image, the nearest neighbour methods can vote and return the recognized object.
+However, the tree nodes are taken by unused objects, thus the the rate of mis-recognition increases, which supports my first statement.
 
 For the second statement, the image representation matrix is calculated as
 $$v = W_{m} \left [ CNN_{\theta_{c}}(I_{b}) \right ] + b_{m}$$
@@ -170,7 +170,7 @@ And therefore, after the dot product with sentence representation vector
 $$S_{kl} = \sum_{t \in texts} max_{i \in cells}(v_{i}^{T}s_{t})$$
 where $v_{i}^{T}$ is the image representation matrix and $s_{t}$ is the representation matrix.
 The un-detected words will thus result in $0$.
-Hence, those objects not in the recognision model (first dataset) cannot be detected even if they are in the secodn dataset.
+Hence, those objects not in the recognition model (first dataset) cannot be detected even if they are in the second dataset.
 
 
 \subsection{Resolution issue}
@@ -185,7 +185,7 @@ the image will be difficult to be summarized correctly. An experiment is mention
 \subsection{Unexpected object issue}
 My hypothesis is that unexpected objects will result in unexpected sentences.
 
-This is a common machine learning issue, but with different apprearance on results.
+This is a common machine learning issue, but with different appearance on results.
 I guess the results will still be a complete sentence even when there is nothing in the input image,
 because the structure of RNN is building sentence from the beginning to the end.
 The experiment is discussed in Section \ref{sec:uo}.
@@ -209,9 +209,9 @@ An experiment on this hypothesis is mentioned in Section \ref{sec:lg}.
 My hypothesis is that the proposed methods cannot distinguish the correct number in most times.
 
 Although the training input word sequence has been been grouped by word2vec,
-the words representing numbers are not treated seperately in proposed methods,
+the words representing numbers are not treated separately in proposed methods,
 i.e. all sentence components are treated equally in RNN.
-That means the word ``two'' in ``two men'' and ``two women'' are treated seperately,
+That means the word ``two'' in ``two men'' and ``two women'' are treated separately,
 When current word is ``two'', the next possible words are ``men'' and ``women''.
 
 However, if the training data contains ``two men'' and ``a woman'' only,
@@ -233,9 +233,9 @@ The experiments are devided into two types:
     \item Fresh test, which is tested on new data;
 \end{enumerate}
 
-My metric test benchmark funcions are defined as:
+My metric test benchmark functions are defined as:
 $$B = max(P(CorrectWord) \times P(CorrectOrder))$$
-where $P(CorrectWord)$ is calculted by:
+where $P(CorrectWord)$ is calculated by:
 $$P(CorrectWord) = \frac{num}{average(length)}$$
 and $P(CorrectOrder)$ is calculated by:
 $$P(CorrectOrder) = \frac{LCSLength}{average(length)}$$
@@ -252,7 +252,7 @@ For the recall test, I randomly selected 1,000 images from Flickr8k dataset usin
 ``shuf -zen1000 f8k\_data/\text{*} | xargs -0 mv -t neuraltalk/rf1kfrom8k/'' commands.
 
 Then, extract features and do the testing. The testing results are shown in Table \ref{tab:recall}.
-And detailed results are in web submision ``benchmark'' folder.
+And detailed results are in web submission ``benchmark'' folder.
 
 The best predictiong details are:
 \begin{itemize}
@@ -285,18 +285,19 @@ and use the model trained from Flickr8k dataset.
 
 Then, extract features and do the testing using the same model. The final results are shown in Table \ref{tab:fresh1}.
 
-The best predictiong details are:
+The best prediction details are:
 \begin{itemize}
     \item Training: ['a', 'brown', 'dog', 'is', 'running', 'through', 'the', 'snow']
     \item Predicting: ['the', 'brown', 'dog', 'is', 'running', 'through', 'the', 'snow']
-    \item Interset: ['brown', 'dog', 'is', 'running', 'through', 'the', 'snow']
+    \item Intersection: ['brown', 'dog', 'is', 'running', 'through', 'the', 'snow']
 \end{itemize}
 
 The worst prediction details are:
 \begin{itemize}
     \item Training: ['a', 'man', 'in', 'a', 'red', 'jacket', 'is', 'standing', 'in', 'front', 'of', 'a', 'building']
     \item Predicting: ['people', 'are', 'boarding', 'an', 'almost-full', 'public', 'bus', 'in', 'brazil']
-    \item Interset: ['in']
+    \item Intersection: ['in']
+\end{itemize}
 
 \end{itemize}
 \begin{table}[]
@@ -313,18 +314,19 @@ max    & min    & average \\ \hline
 Another fresh test is using a model trained by MSCOCO to test 1,000 images from Flickr8k.
 The final results are in Table \ref{tab:fresh2}.
 
-The best predictiong details are:
+The best prediction details are:
 \begin{itemize}
     \item Training: ['a', 'young', 'boy', 'is', 'sitting', 'on', 'a', 'toilet']
     \item Predicting: ['a', 'young', 'boy', 'sitting', 'on', 'a', 'blue', 'toilet']
-    \item Interset: ['a', 'young', 'boy', 'sitting', 'on', 'a', 'toilet']
+    \item Intersection: ['a', 'young', 'boy', 'sitting', 'on', 'a', 'toilet']
 \end{itemize}
 
 The worst prediction details are:
 \begin{itemize}
     \item Training: ['a', 'group', 'of', 'people', 'standing', 'around', 'a', 'table', 'with', 'a', 'cake']
     \item Predicting: ['several', 'women', 'wearing', 'pink', 'energizer', bunny', 'ears', 'point', 'to', 'the', 'right']
-    \item Interset: []
+    \item Intersection: []
+\end{itemize}
 
 \begin{table}[]
 \centering
@@ -341,22 +343,22 @@ max    & min    & average \\ \hline
 \subsection{Experiments for hypothesis}
 \subsubsection{High resolution experiment} \label{sec:hs}
 To verify my hypothesis, I firstly tested an image with the Flickr8k model, whose result is shown in Fig. \ref{fig:hsori}.
-Then, I expanded the background of the image without any zooming, and the result can be seen in \ref{fig:hs}.
+Then, I expanded the background of the image without any zooming, and the result can be seen in Fig. \ref{fig:hs}.
 
 That proved my hypothesis was correct because the model did not know what was on that image.
 It can also be proved in Section \ref{sec:ui} that ``a man'' is the default result in this case.
 
-\begin{figure}
+\begin{figure}[t]
     \begin{center}
-        \includegraphics[width=0.9\textwidth]{2584487952_f70e5aa9bf.ori.jpg}
+        \includegraphics[width=0.9\linewidth]{2584487952_f70e5aa9bf_ori.jpg}
     \end{center}
     \caption{A picture with resulting sentence of ``a brown dog is running through the grass''.}
     \label{fig:hsori}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[t]
     \begin{center}
-        \includegraphics[width=0.9\textwidth]{2584487952_f70e5aa9bf.jpg}
+        \includegraphics[width=0.9\linewidth]{2584487952_f70e5aa9bf.jpg}
     \end{center}
     \caption{A $5000 \times 5000$ px picture, with a dog in the center, the resulting sentence is ``a man is rock climbing''.}
     \label{fig:hs}
@@ -367,12 +369,12 @@ To test this hypothesis, I put a pure green image into the prediction model.
 And the result is shown in Fig. \ref{fig:pure}.
 This also proved that hypothesis that even there was nothing in the image, the model would still give out a complete sentence.
 
-\begin{figure}
+\begin{figure}[t]
     \begin{center}
-        \includegraphics[width=0.9\textwidth]{pure.jpg}
+        \includegraphics[width=0.9\linewidth]{pure.jpg}
     \end{center}
     \caption{A $600 \times 450$pure green image with the resulting sentence of ``a man is jumping in the air''.}
-    \label{fig:hs}
+    \label{fig:pure}
 \end{figure}
 
 \subsubsection{Language grammar experiment} \label{sec:lg}
@@ -385,17 +387,17 @@ The benchmark results are:
 \end{enumerate}
 
 By manual checking the 100 prediction sentences, only one sentence had obvious grammar error.
-That sentance is ``a man and woman walk down a street''.
+That sentence is ``a man and woman walk down a street''.
 The use of ``a man and woman'' looks incorrect.
 However, the interesting part is, this is an coincidence because a training data contains this usage:
-in ``1198194316_543cc7b945.jpg#2'', the training sentence is ``A man and woman standing in front of a refreshment stand''.
+in ``1198194316\_543cc7b945.jpg'', one of the training sentences is ``A man and woman standing in front of a refreshment stand''.
 
 Looking out of grammar issue, the meaning can have problems.
 Here is an example, one of the 100 prediction sentences is
 ``a man in a black shirt and a woman in a white shirt and a black shirt''.
 ``A man in a white shirt and a black shirt'' does not make sense.
 
-Therefore, the grammar error rate is almost 0\%, but the meaning can often confusing.
+Therefore, the grammar error rate is almost 0\%, but the meaning can often be confusing.
 
 
 \subsubsection{Resulting number experiment} \label{sec:rn}
