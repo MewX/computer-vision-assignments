@@ -143,7 +143,7 @@ The ``image-sentence score'' is the benchmark value, and the experiments from th
 \end{figure*}
 
 
-\section{Hypothesis and limitations}
+\section{Hypothesis and limitations} \label{sec:hl}
 \subsection{Two model issue}
 The proposed methods in original paper use two models for the final prediction:
 the object recognition model and description generator model.
@@ -205,7 +205,7 @@ which helps forming the grammatically correct sentence.
 An experiment on this hypothesis is mentioned in Section \ref{sec:lg}.
 
 
-\subsection{Resulting number issue}
+\subsection{Resulting number issue} \label{sec:rni}
 My hypothesis is that the proposed methods cannot distinguish the correct number in most times.
 
 Although the training input word sequence has been been grouped by word2vec,
@@ -342,8 +342,8 @@ max    & min    & average \\ \hline
 
 \subsection{Experiments for hypothesis}
 \subsubsection{High resolution experiment} \label{sec:hs}
-To verify my hypothesis, I firstly tested an image with the Flickr8k model, whose result is shown in Fig. \ref{fig:hsori}.
-Then, I expanded the background of the image without any zooming, and the result can be seen in Fig. \ref{fig:hs}.
+To verify my hypothesis, I firstly tested an image with the Flickr8k model, whose result is shown in Figure \ref{fig:hsori}.
+Then, I expanded the background of the image without any zooming, and the result can be seen in Figure \ref{fig:hs}.
 
 That proved my hypothesis was correct because the model did not know what was on that image.
 It can also be proved in Section \ref{sec:ui} that ``a man'' is the default result in this case.
@@ -366,7 +366,7 @@ It can also be proved in Section \ref{sec:ui} that ``a man'' is the default resu
 
 \subsubsection{Unexpected object experiment} \label{sec:uo}
 To test this hypothesis, I put a pure green image into the prediction model.
-And the result is shown in Fig. \ref{fig:pure}.
+And the result is shown in Figure \ref{fig:pure}.
 This also proved that hypothesis that even there was nothing in the image, the model would still give out a complete sentence.
 
 \begin{figure}[t]
@@ -397,7 +397,7 @@ Here is an example, one of the 100 prediction sentences is
 ``a man in a black shirt and a woman in a white shirt and a black shirt''.
 ``A man in a white shirt and a black shirt'' does not make sense.
 
-Therefore, the grammar error rate is almost 0\%, but the meaning can often be confusing.
+Therefore, the grammar error rate is almost 0\%, but the meaning of resulting sentences can often be confusing.
 
 
 \subsubsection{Resulting number experiment} \label{sec:rn}
@@ -409,6 +409,35 @@ Therefore, the hypothesis is correct that the model from the original paper does
 
 
 \section{Conclusion}
+Through this assignment, I learnt the new research approaches: using existing databases/models directly.
+It is surprising to see that the authors takes the CNN from ImageNet directly
+to achieve a high correctness rate for object recognitions.
+Unlike what I thought before, learning an approach from a research paper,
+and I have to follow the steps and try to reoccur the whole process.
+
+Sometimes, the author does not publish the source codes and tools,
+thus it is not easy to reuse the existing codes and outcomes.
+In this case, if wanting to use their methods, I have to implement the methods from zero.
+
+However, even the comments in the source codes from the authors say that it is encouraged to build extensions based on their codes.
+Moreover, this is what the authors did for the their paper, they applied the ImageNet database and model directly,
+and text2vec tools by Mikolov \textit{et al.}, etc.
+This helps reducing the work a lot, and motivate the research for more wonderful extensions.
+
+Regarding the methods in this paper, it is very happy to see this method breaking out the sentence structure.
+They use multimodal RNN for fully reasonable context training,
+and can significantly make resulting sentences correct grammatically.
+Although combining CNN and RNN together is a typical solution for image captioning,
+they evolve a lot of extensions to make the results more accurate.
+
+The potential limitations are mentioned in Section \ref{sec:hl}.
+To overcome those limitations, increasing the training dataset is obviously a solution,
+as the methods is universal, and highly depending on the training dataset.
+
+Additionally, as I mentioned in Section \ref{sec:rni}, the number are not handled very well in this training methods.
+I think, for example, numbers can be specially treated/learnt as another model.
+Since the objects can be recognised, counting objects should not be a big issues if the number model has already known
+how to describe the objects.
 
 
 % Bibliography

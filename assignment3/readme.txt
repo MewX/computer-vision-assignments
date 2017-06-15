@@ -9,5 +9,6 @@ The using instructions:
 
 Now you can run the shell scripts (usage can be found in the head of scripts).
 
-P.S. parse_data_set.py is used for generating essential training information from flicker8k.
+P.S. benchmark_solution.py is the benchmark programs;
+P.S.2. parse_data_set.py is used for generating essential training information from flicker8k.
 After training, you can have your own model.
