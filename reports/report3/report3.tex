@@ -30,30 +30,31 @@ SA, Australia\\
 
 % abstract
 \begin{abstract}
-This report first introduces the problem of generating image descriptions and its applications.
+This report first introduces the problem: generating image descriptions, and its applications.
 Previous approaches and their limitations are mentioned as well.
 Then, the algorithm process from the original paper is discussed in three parts:
 training, predicting and evaluating.
-Next, my hypothesises, relative proofs and the limitations of proposed methods are be discussed.
+Next, my hypothesises, relative proofs and the limitations of proposed methods are discussed.
 The reports also covers the experiments I did, and the experiments for verifying my hypothesises.
-At last, is a conclusion of what I learnt from this assignment, and the extensions that I can come out.
+At last, it is a conclusion of what I learnt from this assignment, and the extensions that I can come out.
 \end{abstract}
 
 % content
 \section{The Problem}
-The problem is to give a sentence in natural language of the description for an input image.
+The problem is to give a description sentence in natural language for an input image.
 
 This problem is very typical, because it is very challenging that it transforms information from ``image'' type to ``text'' type.
 The input image should firstly be understood by the artificial intelligence,
 then it should be able to output a descriptive text to tell what the input image shows.
 
-The relative applications can be various, like: helping human to automatically pointing out the objectives and events in a massive number of images,
-and helping visually impaired people to see. But the most difficult challenge is not only understanding both image and natural language,
-but also the information transformation.
+The relative applications can be various, like: helping human to automatically pointing out the objectives
+and events among a massive number of images, and helping visually impaired people to see.
+But the most difficult challenge is not only understanding both image and natural language,
+but also transforming the information from one type to another type.
 
 
 \section{Background}
-Before this paper by Karpathy \textit{et al.} \cite{origin}. There are plenty of researches challenging this problem,
+Before the original paper by Karpathy \textit{et al.} \cite{origin}. There are plenty of researches challenging this problem,
 which can be mainly divided into three types.
 
 \subsection{Image annotating strategy}
@@ -73,10 +74,10 @@ generate richer and high-level descriptions of the image, no matter what the sce
 
 \subsection{Description generating strategy}
 Methods from Kulkarni \textit{et al.} \cite{kulkarni} limit the resulting sentence number in one;
-whereas this paper's authors think that manual restriction is not necessary and it reduces the artificial intelligence's creativity.
+whereas the original paper's authors think that manual restriction is not necessary and it reduces the artificial intelligence's creativity.
 
 Matuszek \textit{et al.} \cite{matuszek} used grounding dependency tree relations which arrange words in a vector space.
-The vector space would limit the results to some extend, like the sentence length, etc.
+The vector space would limit the results to some extend, like the resulting sentence length, etc.
 
 
 \subsection{Connecting between images and natural language strategy}
@@ -92,13 +93,13 @@ Additionally, in the original paper, the authors use these pre-trained models as
 
 
 \section{Algorithm Description}
-Unlike the previous approaches, the proposed method in Karpathy \textit{et al.}'s paper is to let the artificial neural networks
+Unlike the previous approaches, the proposed method in Karpathy \textit{et al.}'s paper is to make the artificial neural networks
 learn the pattern between images and sentences automatically.
-Therefore there is no limitation for this method literally,
+Therefore, there is no limitation for this method literally,
 because the training data can be arbitrary, and the model thus will be adjusted by the training data.
 
 \subsection{Training}
-The overview of training algorithm steps is as follows,
+The overview of training steps is as follows,
 \begin{enumerate}
     \item Prepare the training images and corresponding sentences;
           \textit{(datasets mentioned in the paper are flickr8k, flickr30k and MSCOCO,
@@ -110,10 +111,10 @@ The overview of training algorithm steps is as follows,
 \end{enumerate}
 
 \subsection{Predicting}
-To predict an image:
+To predict an image using existing model:
 \begin{enumerate}
-    \item Prepare testing images;
-    \item Extract 4096 dimensional features vector using pre-trained CNN model on ImageNet;
+    \item Prepare testing images and prediction RNN model;
+    \item Extract 4096 dimensional feature vector using pre-trained CNN model on ImageNet;
           \textit{(same as training.)}
     \item Generate description from multimodal RNN by setting ``START'' token and image representation matrix;
           \textit{(until ``END'' is generated, the description is finished generating.)}
@@ -122,7 +123,7 @@ To predict an image:
 \subsection{Benchmark}
 The original paper also mentions the methods for predicting region text information (to mark the regions like Figure \ref{fig:region}):
 \begin{enumerate}
-    \item When having the image feature vector;
+    \item When having the image's feature vector;
     \item Calculate the image representation matrix using top 19 detected known objects by the dot product between feature vector and a parameter matrix $W_{m}$;
           \textit{(the representation matrix in the paper is in the shape of 20 $h$-dimensional vectors, thus this is the recognizable resolution.)}
     \item Calculate the sentence representation vector using Bidirectional Recurrent Neural Network (BRNN) \cite{brnn};
@@ -138,7 +139,8 @@ The original paper also mentions the methods for predicting region text informat
           to find the best alignment, the authors use dynamic programming by Viterbi et al. \cite{viterbi}.)}
 \end{enumerate}
 
-The ``image-sentence score'' is the benchmark value, and the experiments from the original paper use this score ranking for comparisons.
+The ``image-sentence score'' is the benchmark value.
+Experiments from the original paper use this score ranking for comparisons.
 
 \begin{figure*}
     \begin{center}
@@ -167,7 +169,7 @@ In the original paper, the first model is pre-trained for object recognition by 
 This is a tree-based model (database) containing 5247 categories of objects, and built by around 50 million images.
 And the original paper uses 200 categories from The ImageNet Detection Challenge \cite{inch}.
 Given the input image, the nearest neighbour methods can vote and return the recognized object.
-However, the tree nodes are taken by unused objects, thus the the rate of mis-recognition increases, which supports my first statement.
+However, plenty of tree nodes are taken by unused objects, thus the the rate of mis-recognition increases, which supports my first statement.
 
 For the second statement, the image representation matrix is calculated as
 $$v = W_{m} \left [ CNN_{\theta_{c}}(I_{b}) \right ] + b_{m}$$
@@ -181,9 +183,10 @@ Hence, those objects not in the recognition model (first dataset) cannot be dete
 
 \subsection{Resolution issue}
 The image feature size is fixed to 4096 dimensions in the original paper.
-My hypothesis is that, if the image is too larger than its inside objects, the objects cannot even be recognized.
+My hypothesis is that, if the image is far too larger than its inside objects, the objects cannot be recognized,
+even if the objects are very clear when zooming in the image.
 
-In the original paper, the feature set of an image is expressed in a 4096 dimension vector.
+In the original paper, the feature set of an image is expressed in a 4096 dimensional vector.
 If the image is super large, and the objects cannot be effectively detected and stored in the feature vector,
 the image will be difficult to be summarized correctly. An experiment is mentioned in Section \ref{sec:hs}.
 
@@ -192,7 +195,7 @@ the image will be difficult to be summarized correctly. An experiment is mention
 My hypothesis is that unexpected objects will result in unexpected sentences.
 
 This is a common machine learning issue, but with different appearance on results.
-I guess the results will still be a complete sentence even when there is nothing in the input image,
+I guess the results will still be a complete sentence, even when there is nothing in the input image,
 because the structure of RNN is building sentence from the beginning to the end.
 The experiment is discussed in Section \ref{sec:uo}.
 
@@ -235,21 +238,22 @@ The RNN structure is as same as described in the original paper.
 
 The experiments are devided into two types:
 \begin{enumerate}
-    \item Recall test, which is tested on training data;
-    \item Fresh test, which is tested on new data;
+    \item Recall test: the model is tested on training data;
+    \item Fresh test: the model is tested on new data;
 \end{enumerate}
 
 My metric test benchmark functions are defined as:
-$$B = max(P(CorrectWord) \times P(CorrectOrder))$$
-where $P(CorrectWord)$ is calculated by:
+$$B = max(\frac{1}{2}P(CorrectWord) + \frac{1}{2}P(CorrectOrder)$$
+where the word correction rates of the resuling sentence $P(CorrectWord)$ is calculated by:
 $$P(CorrectWord) = \frac{num}{average(length)}$$
-and $P(CorrectOrder)$ is calculated by:
+where $num$ is the number of words that exists in both correct sentences and the resulting sentence.
+The probability of words appearing in correct order $P(CorrectOrder)$ is calculated by:
 $$P(CorrectOrder) = \frac{LCSLength}{average(length)}$$
 where LCS means the longest common subsequence, which is a very classical dynamic programming problem.
 Here is an example:
 \begin{itemize}
-    \item Input a: ['a', 'brown', 'dog', 'is', 'running', 'through', 'the', 'grass']
-    \item Input b: ['a', 'brown', 'dog', 'is', 'running', 'outside']
+    \item Input A: ['a', 'brown', 'dog', 'is', 'running', 'through', 'the', 'grass']
+    \item Input B: ['a', 'brown', 'dog', 'is', 'running', 'outside']
     \item LCS: ['a', 'brown', 'dog', 'is', 'running']
 \end{itemize}
 
@@ -317,7 +321,7 @@ max    & min    & average \\ \hline
 \label{tab:fresh1}
 \end{table}
 
-Another fresh test is using a model trained by MSCOCO to test 1,000 images from Flickr8k.
+Another fresh test is using a model trained by MSCOCO dataset to test 1,000 images from Flickr8k.
 The final results are in Table \ref{tab:fresh2}.
 
 The best prediction details are:
@@ -395,8 +399,8 @@ The benchmark results are:
 By manual checking the 100 prediction sentences, only one sentence had obvious grammar error.
 That sentence is ``a man and woman walk down a street''.
 The use of ``a man and woman'' looks incorrect.
-However, the interesting part is, this is an coincidence because a training data contains this usage:
-in ``1198194316\_543cc7b945.jpg'', one of the training sentences is ``A man and woman standing in front of a refreshment stand''.
+However, the interesting part is, this is an coincidence because a training data contains exact this usage:
+in ``1198194316\_543cc7b945.jpg'', one of its training sentences is ``A man and woman standing in front of a refreshment stand''.
 
 Looking out of grammar issue, the meaning can have problems.
 Here is an example, one of the 100 prediction sentences is
@@ -409,23 +413,23 @@ Therefore, the grammar error rate is almost 0\%, but the meaning of resulting se
 \subsubsection{Resulting number experiment} \label{sec:rn}
 Using the same prediction sentence results mentioned above, by manual checking.
 At first, filter the images containing only one object, there are 7 images containing more than one objects,
-but 4 of them have a wrong number of subjects. Two of them used a word ``plenty'' to describe the number, which are counted as correct.
+but 4 of them have a wrong number of subjects. Two of them used a word ``plenty of'' to describe the number, which are counted as correct.
 
 Therefore, the hypothesis is correct that the model from the original paper does not have the ability to count the numbers.
 
 
 \section{Conclusion}
 Through this assignment, I learnt the new research approaches: using existing databases/models directly.
-It is surprising to see that the authors takes the CNN from ImageNet directly
+It is surprising to see that the authors take the CNN from ImageNet directly
 to achieve a high correctness rate for object recognitions.
+
 Unlike what I thought before, learning an approach from a research paper,
 and I have to follow the steps and try to recur the whole process.
-
 Sometimes, the author does not publish the source codes and tools,
-thus it is not easy to reuse the existing codes and outcomes.
-In this case, if wanting to use their methods, I have to implement the methods from zero.
+thus it is not easy to reuse the existing codes and outcomes, thus recurring the process is necessary.
 
-However, even the comments in the source codes from the authors say that it is encouraged to build extensions based on their codes.
+However, in most cases, including this research, even the comments in the source codes from the authors say
+that it is encouraged to build extensions based on their codes.
 Moreover, this is what the authors did for the their paper, they applied the ImageNet database and model directly,
 and text2vec tools by Mikolov \textit{et al.}, etc.
 This helps reducing the work a lot, and motivate the research for more wonderful extensions.
