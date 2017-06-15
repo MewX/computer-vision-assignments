@@ -143,19 +143,40 @@ The ``image-sentence score'' is the benchmark value, and the experiments from th
 
 
 \section{Hypothesis and limitations}
+\subsection{Two model problem}
+The proposed methods in original paper use two models for the final prediction:
+the object detection model and description generator model.
+
+Therefore, two models are trained with different datasets.
+My hypothesis is the objects which are in the first training dataset but not in the second dataset
+will take an unnecessary weight in the first model;
+the objects which are not in the first training dataset but in the sencond dataset
+will not be detected.
+
+% TODO: prove it
+
+
+\subsection{Solution issue}
+The image feature size is fixed to 4096 dimensions in the original paper.
+The hypothesis is that, if the image is too larger than its inside objects, the objects cannot even be recognized.
+
+% TODO: prove it
+
+
+
 % 1. two data model problem: one object in one model, not in another model (PS an object)
 % 2. input generation size not enough, use small object with high resolution
 % 3.
 
 
 \section{Experiments}
-% details set up
+% TODO: details set up
 
-% log prob, but how is it calculated
+% TODO: log prob, but how is it calculated
 
-% benchmark on flickr8k's 1k
+% TODO; benchmark on flickr8k's 1k
 
-% benchmark on hypothesis
+% TODO benchmark on hypothesis
 
 
 \section{Conclusion}
